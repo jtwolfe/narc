@@ -49,6 +49,7 @@ export function FluxLab({ data }: { data: Analysis }) {
   const [playing, setPlaying] = useState(false);
   const [bitrate, setBitrate] = useState(1200);
   const [heat, setHeat] = useState(false);
+  const [decode, setDecode] = useState<"v11" | "v1" | "v0">("v11");
   const tRef = useRef(t);
   tRef.current = t;
   const frame = useMemo(() => frameAtTime(frames, t), [frames, t]);
@@ -111,13 +112,34 @@ export function FluxLab({ data }: { data: Analysis }) {
   };
 
   const deliveryBytes = Math.round((bitrate * 1000 * duration) / 8);
-  const heatSrc = frame.key || frame.cut ? `/media/heat/${String(frame.i).padStart(4, "0")}.jpg` : null;
+  const heatSrc =
+    frame.key || frame.cut || frame.residual > 10
+      ? `/media/heatmaps/${String(frame.i).padStart(4, "0")}.jpg`
+      : null;
+  const recSrc =
+    decode === "v0"
+      ? (source.reconstructV0 ?? source.reconstruct)
+      : decode === "v1"
+        ? (source.reconstructV1 ?? source.reconstruct)
+        : source.reconstruct;
+  const baseline = stats.baseline;
+  const baselineV1 = stats.baselineV1;
+  const blocks = stats.blocksPerFrame ?? 220;
+  const decodeLabel =
+    decode === "v0" ? "Model decode · v0" : decode === "v1" ? "Model decode · v1" : "Model decode · v1.1";
+  const decodeSub =
+    decode === "v0"
+      ? "Global translation · 10 fps"
+      : decode === "v1"
+        ? "Inverted-sign block MC · 24 fps"
+        : "Corrected block MC · 24 fps";
 
   const strip = useMemo(() => {
     const out: number[] = [];
-    for (let i = 0; i < frames.length; i += 10) out.push(i);
+    const step = Math.max(1, Math.round(stats.fps));
+    for (let i = 0; i < frames.length; i += step) out.push(i);
     return out;
-  }, [frames]);
+  }, [frames, stats.fps]);
 
   return (
     <div className="min-h-dvh bg-bg text-fg">
@@ -131,15 +153,18 @@ export function FluxLab({ data }: { data: Analysis }) {
               Fluxfield
             </h1>
             <p className="mt-2 max-w-xl text-sm text-pretty text-fg-muted">
-              {source.title} · {source.window}. Raw flux is split into motion,
-              residual, and cuts. Keyframes land on unexplained energy — then
-              play is just rasterize and encode.
+              {source.title} · {source.window}. Attempt{" "}
+              <span className="text-fg">{stats.attempt ?? "v1.1-mc-correct"}</span>
+              : same 16×16 stack as v1, with the motion sign corrected, no
+              black tiles, residual packed as an atlas. Switch decoders to
+              see v0 and the broken v1 side by side.
             </p>
           </div>
           <p className="font-mono text-xs leading-relaxed text-fg-subtle sm:text-right">
             {source.credit}
             <br />
             Analysis {stats.width}×{stats.height} @ {stats.fps} fps
+            {stats.block ? ` · ${stats.block[0]}×${stats.block[1]} blocks` : ""}
           </p>
         </div>
       </header>
@@ -167,12 +192,13 @@ export function FluxLab({ data }: { data: Analysis }) {
             }}
           />
           <Viewer
-            label="Model decode"
-            sub="Keyframe + warp + residual"
+            key={decode}
+            label={decodeLabel}
+            sub={decodeSub}
             videoRef={recRef}
-            src={source.reconstruct}
+            src={recSrc}
             muted
-            overlay={heat && heatSrc ? heatSrc : null}
+            overlay={heat && decode === "v11" && heatSrc ? heatSrc : null}
             onTime={(v) => {
               setT(v);
               if (srcRef.current && Math.abs(srcRef.current.currentTime - v) > 0.12) {
@@ -209,6 +235,38 @@ export function FluxLab({ data }: { data: Analysis }) {
               />
               Residual heat
             </label>
+            <div className="flex min-h-11 rounded-md bg-bg-subtle p-0.5" role="group" aria-label="Decoder version">
+              <button
+                type="button"
+                className={cn(
+                  "min-h-10 rounded-sm px-3 font-mono text-xs",
+                  decode === "v11" ? "bg-bg-elevated text-fg" : "text-fg-muted",
+                )}
+                onClick={() => setDecode("v11")}
+              >
+                v1.1
+              </button>
+              <button
+                type="button"
+                className={cn(
+                  "min-h-10 rounded-sm px-3 font-mono text-xs",
+                  decode === "v1" ? "bg-bg-elevated text-fg" : "text-fg-muted",
+                )}
+                onClick={() => setDecode("v1")}
+              >
+                v1
+              </button>
+              <button
+                type="button"
+                className={cn(
+                  "min-h-10 rounded-sm px-3 font-mono text-xs",
+                  decode === "v0" ? "bg-bg-elevated text-fg" : "text-fg-muted",
+                )}
+                onClick={() => setDecode("v0")}
+              >
+                v0
+              </button>
+            </div>
           </div>
           <div className="mt-3">
             <Slider
@@ -228,23 +286,100 @@ export function FluxLab({ data }: { data: Analysis }) {
           <Filmstrip frames={frames} indices={strip} t={t} onSeek={sync} />
         </div>
 
-        <div className="mt-6 grid gap-3 md:grid-cols-3">
-          <StatCard label="Origin model" value={formatBytes(stats.modelBytes)} hint="keys + residual JPEGs + motion" />
-          <StatCard label="H.264 source clip" value={formatBytes(stats.sourceBytes)} hint="same 90s, 640×360" />
+        <div className="mt-6 grid gap-3 md:grid-cols-4">
           <StatCard
-            label="Raw analysis pixels"
-            value={formatBytes(stats.rawBytes)}
-            hint={`${stats.ratioVsRaw.toFixed(0)}× larger than the model`}
+            label="v1.1 origin model"
+            value={formatBytes(stats.modelBytes)}
+            hint="keys + residual atlas + intra atlas + MVs"
+          />
+          <StatCard
+            label="v1 origin (broken)"
+            value={baselineV1 ? formatBytes(baselineV1.modelBytes) : "—"}
+            hint="inverted warp · full-frame residual JPEG"
+          />
+          <StatCard
+            label="Mean reconstruct PSNR"
+            value={stats.meanPsnr ? `${stats.meanPsnr.toFixed(1)} dB` : "—"}
+            hint={stats.minPsnr != null ? `min ${stats.minPsnr.toFixed(1)} · median ${stats.medianPsnr?.toFixed(1)}` : "v1.1 vs analysis JPEG"}
+          />
+          <StatCard
+            label="H.264 source clip"
+            value={formatBytes(stats.sourceBytes)}
+            hint="same 90s, 640×360"
           />
         </div>
 
-        <div className="mt-3 grid gap-3 lg:grid-cols-5">
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <Mini label="Shots" value={String(stats.shots)} />
           <Mini label="Keyframes" value={String(stats.keyframes)} />
-          <Mini label="Cuts" value={String(stats.cuts)} />
-          <Mini label="Residual frames stored" value={String(stats.residualsStored)} />
-          <Mini label="Mean unexplained" value={stats.meanResidual.toFixed(1)} />
+          <Mini label="Residual frames" value={String(stats.residualsStored)} />
+          <Mini
+            label="Skip blocks"
+            value={stats.skipBlockFrac != null ? `${(stats.skipBlockFrac * 100).toFixed(0)}%` : "—"}
+          />
+          <Mini
+            label="Residual blocks"
+            value={stats.residBlockFrac != null ? `${(stats.residBlockFrac * 100).toFixed(0)}%` : "—"}
+          />
+          <Mini
+            label="Intra blocks"
+            value={stats.intraBlockFrac != null ? `${(stats.intraBlockFrac * 100).toFixed(0)}%` : "—"}
+          />
         </div>
+
+        {(baseline || baselineV1) ? (
+          <section className="mt-3 overflow-x-auto rounded-xl bg-bg-elevated p-4 shadow-border">
+            <h2 className="font-display text-lg font-medium">v0 · v1 · v1.1</h2>
+            <table className="mt-3 w-full min-w-[36rem] text-left font-mono text-sm">
+              <thead className="text-xs text-fg-subtle">
+                <tr>
+                  <th className="py-2 pr-3 font-medium"> </th>
+                  <th className="py-2 pr-3 font-medium">v0 global</th>
+                  <th className="py-2 pr-3 font-medium">v1 inverted</th>
+                  <th className="py-2 font-medium">v1.1 correct</th>
+                </tr>
+              </thead>
+              <tbody className="text-fg">
+                <tr className="border-t border-border">
+                  <td className="py-2 pr-3 text-fg-muted">Cadence</td>
+                  <td className="py-2 pr-3">{baseline ? `${baseline.fps} fps · ${baseline.frames}` : "—"}</td>
+                  <td className="py-2 pr-3">{baselineV1 ? `${baselineV1.fps} fps · ${baselineV1.frames}` : "—"}</td>
+                  <td className="py-2">{stats.fps} fps · {stats.frames}</td>
+                </tr>
+                <tr className="border-t border-border">
+                  <td className="py-2 pr-3 text-fg-muted">Keyframes</td>
+                  <td className="py-2 pr-3">{baseline ? baseline.keyframes : "—"}</td>
+                  <td className="py-2 pr-3">{baselineV1 ? baselineV1.keyframes : "—"}</td>
+                  <td className="py-2">{stats.keyframes}</td>
+                </tr>
+                <tr className="border-t border-border">
+                  <td className="py-2 pr-3 text-fg-muted">Residual frames</td>
+                  <td className="py-2 pr-3">{baseline ? baseline.residualsStored : "—"}</td>
+                  <td className="py-2 pr-3">{baselineV1 ? baselineV1.residualsStored : "—"}</td>
+                  <td className="py-2">{stats.residualsStored}</td>
+                </tr>
+                <tr className="border-t border-border">
+                  <td className="py-2 pr-3 text-fg-muted">Origin bytes</td>
+                  <td className="py-2 pr-3">{baseline ? formatBytes(baseline.modelBytes) : "—"}</td>
+                  <td className="py-2 pr-3">{baselineV1 ? formatBytes(baselineV1.modelBytes) : "—"}</td>
+                  <td className="py-2">{formatBytes(stats.modelBytes)}</td>
+                </tr>
+                <tr className="border-t border-border">
+                  <td className="py-2 pr-3 text-fg-muted">Mean leftover</td>
+                  <td className="py-2 pr-3">{baseline ? baseline.meanResidual.toFixed(1) : "—"}</td>
+                  <td className="py-2 pr-3">{baselineV1 ? baselineV1.meanResidual.toFixed(1) : "—"}</td>
+                  <td className="py-2">{stats.meanResidual.toFixed(1)}</td>
+                </tr>
+                <tr className="border-t border-border">
+                  <td className="py-2 pr-3 text-fg-muted">Mean PSNR</td>
+                  <td className="py-2 pr-3">{baseline?.meanPsnr != null ? `${baseline.meanPsnr.toFixed(1)} dB` : "—"}</td>
+                  <td className="py-2 pr-3">{baselineV1?.meanPsnr != null ? `${baselineV1.meanPsnr.toFixed(1)} dB` : "—"}</td>
+                  <td className="py-2">{stats.meanPsnr != null ? `${stats.meanPsnr.toFixed(1)} dB` : "—"}</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        ) : null}
 
         <div className="mt-6 grid gap-3 lg:grid-cols-2">
           <section className="rounded-xl bg-bg-elevated p-5 shadow-border">
@@ -256,21 +391,46 @@ export function FluxLab({ data }: { data: Analysis }) {
               <Row k="Motion mag" v={frame.motion.toFixed(2)} />
               <Row k="Residual" v={frame.residual.toFixed(2)} />
               <Row k="Occlusion" v={`${(frame.occlusion * 100).toFixed(1)}%`} />
-              <Row k="Warp" v={`${frame.dx}, ${frame.dy}px`} />
+              <Row k="Warp" v={`${frame.dx.toFixed(1)}, ${frame.dy.toFixed(1)} px`} />
+              <Row
+                k="Blocks"
+                v={
+                  frame.skipBlocks != null
+                    ? `${frame.skipBlocks} skip · ${frame.residBlocks ?? 0} resid · ${frame.intraBlocks ?? 0} intra`
+                    : "—"
+                }
+              />
               <Row k="Stored residual" v={frame.storedResidual ? "yes" : "skip"} />
+              <Row k="PSNR" v={frame.psnr != null ? `${frame.psnr.toFixed(1)} dB` : "—"} />
             </dl>
+            {frame.skipBlocks != null ? (
+              <div className="mt-4 flex h-2 overflow-hidden rounded-full bg-bg-subtle">
+                <span
+                  className="bg-moss"
+                  style={{ width: `${(100 * frame.skipBlocks) / blocks}%` }}
+                />
+                <span
+                  className="bg-copper"
+                  style={{ width: `${(100 * (frame.residBlocks ?? 0)) / blocks}%` }}
+                />
+                <span
+                  className="bg-accent"
+                  style={{ width: `${(100 * (frame.intraBlocks ?? 0)) / blocks}%` }}
+                />
+              </div>
+            ) : null}
             <p className="mt-4 text-sm text-pretty text-fg-muted">
               {frame.key
                 ? "Anchor stored as pixels. The model is not allowed to invent this frame."
                 : frame.kind === "motion"
-                  ? "Warp ate most of the flux. No keyframe — motion is cheap."
+                  ? "Local motion ate most of the flux. Residual only on blocks that failed skip."
                   : frame.kind === "residual"
-                    ? "After the warp, new pixels remain. Residual JPEG stored."
+                    ? "After block MC, new pixels remain. Full-res residual JPEG on those blocks; intra on uncovered edges."
                     : frame.kind === "cut"
                       ? "Histogram break. New shot, new keyframe."
                       : frame.kind === "grain"
                         ? "High-frequency residual on a still field — treated as a process, not a key."
-                        : "Low flux. Predicted from the previous reconstruction."}
+                        : "Low flux. Predicted from the previous reconstruction, per-block skip."}
             </p>
           </section>
 
@@ -307,22 +467,25 @@ export function FluxLab({ data }: { data: Analysis }) {
         </div>
 
         <section className="mt-6 rounded-xl bg-bg-elevated p-5 shadow-border">
-          <h2 className="font-display text-lg font-medium">How keys were placed</h2>
+          <h2 className="font-display text-lg font-medium">How this attempt encodes</h2>
           <ol className="mt-4 grid gap-3 text-sm text-fg-muted sm:grid-cols-3">
             <li>
-              <span className="block font-medium text-fg">1. Decompose flux</span>
-              Warp the previous frame with a global translation. Residual is
-              whatever the warp cannot explain. Occlusion is uncovered pixels.
+              <span className="block font-medium text-fg">1. Sign-correct warp</span>
+              pred[x] = ref[x − dx]. Search, half-pel, local MV and hole
+              mask share that convention. Out-of-frame samples pad, never
+              write black. Holes go intra.
             </li>
             <li>
-              <span className="block font-medium text-fg">2. Ignore explained motion</span>
-              A pan is cheap. Energy that places a keyframe is residual +
-              occlusion, not raw |Iₜ₊₁−Iₜ|.
+              <span className="block font-medium text-fg">2. RDO on the real pred</span>
+              Skip / residual / intra is scored on the buffer that lands
+              in recon. Residual and intra store as packed atlases, not a
+              full-frame JPEG punched with 128s.
             </li>
             <li>
-              <span className="block font-medium text-fg">3. Encode the rest</span>
-              Keys as JPEG. Inter frames: 2-byte motion + optional low-res
-              residual. Play = run that model, cache rasters, encode out.
+              <span className="block font-medium text-fg">3. Smooth the field</span>
+              Hierarchical ±8 then ±2, 3×3 MV median, 1-px deblock on
+              disagreeing edges. v0 and the broken v1 stay one click
+              away.
             </li>
           </ol>
         </section>
@@ -503,7 +666,7 @@ function Filmstrip({
             )}
           >
             <img
-              src={`/media/strip/${String(i).padStart(4, "0")}.jpg`}
+              src={`/media/thumbs/${String(i).padStart(4, "0")}.jpg`}
               alt=""
               className="size-full object-cover"
             />

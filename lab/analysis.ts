@@ -49,6 +49,8 @@ export type BaselineStats = {
   residualsStored: number;
   modelBytes: number;
   meanResidual: number;
+  meanPsnr?: number;
+  skipBlockFrac?: number;
   reconstructMp4Bytes: number;
 };
 
@@ -79,6 +81,8 @@ export type Analysis = {
     meanResidual: number;
     meanMotion: number;
     meanPsnr?: number;
+    medianPsnr?: number;
+    minPsnr?: number;
     skipBlockFrac?: number;
     residBlockFrac?: number;
     intraBlockFrac?: number;
@@ -89,13 +93,16 @@ export type Analysis = {
     kinds?: Record<string, number>;
     lambda?: number;
     skipMae?: number;
+    blackTileFrames?: number;
     attempt?: string;
     baseline?: BaselineStats;
+    baselineV1?: BaselineStats;
   };
   source: {
     clip: string;
     reconstruct: string;
     reconstructV0?: string;
+    reconstructV1?: string;
     scope: string;
     duration: number;
     startSec: number;
