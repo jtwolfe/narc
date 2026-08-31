@@ -21,6 +21,8 @@ export type FrameRow = {
   lumaJump: number;
   dx: number;
   dy: number;
+  scale?: number;
+  rot?: number;
   kind: FrameKind;
   key: boolean;
   cut: boolean;
@@ -52,6 +54,8 @@ export type BaselineStats = {
   meanPsnr?: number;
   skipBlockFrac?: number;
   reconstructMp4Bytes: number;
+  residualBytes?: number;
+  intraBytes?: number;
 };
 
 export type Analysis = {
@@ -80,6 +84,8 @@ export type Analysis = {
     meanFlux: number;
     meanResidual: number;
     meanMotion: number;
+    meanScale?: number;
+    meanAbsRot?: number;
     meanPsnr?: number;
     medianPsnr?: number;
     minPsnr?: number;
@@ -97,12 +103,14 @@ export type Analysis = {
     attempt?: string;
     baseline?: BaselineStats;
     baselineV1?: BaselineStats;
+    baselineV11?: BaselineStats;
   };
   source: {
     clip: string;
     reconstruct: string;
     reconstructV0?: string;
     reconstructV1?: string;
+    reconstructV11?: string;
     scope: string;
     duration: number;
     startSec: number;
