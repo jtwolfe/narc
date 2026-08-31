@@ -25,6 +25,11 @@ export type FrameRow = {
   key: boolean;
   cut: boolean;
   storedResidual: boolean;
+  skipBlocks?: number;
+  residBlocks?: number;
+  intraBlocks?: number;
+  ref?: number;
+  psnr?: number;
 };
 
 export type ShotRow = {
@@ -36,7 +41,19 @@ export type ShotRow = {
   keys: number;
 };
 
+export type BaselineStats = {
+  attempt: string;
+  fps: number;
+  frames: number;
+  keyframes: number;
+  residualsStored: number;
+  modelBytes: number;
+  meanResidual: number;
+  reconstructMp4Bytes: number;
+};
+
 export type Analysis = {
+  attempt?: string;
   frames: FrameRow[];
   shots: ShotRow[];
   stats: {
@@ -55,17 +72,30 @@ export type Analysis = {
     keyframeBytes: number;
     residualBytes: number;
     motionBytes: number;
+    intraBytes?: number;
     rawBytes: number;
     reconstructMp4Bytes: number;
     meanFlux: number;
     meanResidual: number;
     meanMotion: number;
+    meanPsnr?: number;
+    skipBlockFrac?: number;
+    residBlockFrac?: number;
+    intraBlockFrac?: number;
     ratioVsRaw: number;
     ratioVsSource: number;
+    block?: number[];
+    blocksPerFrame?: number;
+    kinds?: Record<string, number>;
+    lambda?: number;
+    skipMae?: number;
+    attempt?: string;
+    baseline?: BaselineStats;
   };
   source: {
     clip: string;
     reconstruct: string;
+    reconstructV0?: string;
     scope: string;
     duration: number;
     startSec: number;
