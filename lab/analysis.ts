@@ -34,6 +34,7 @@ export type FrameRow = {
   splitBlocks?: number;
   cu8Blocks?: number;
   cu4Blocks?: number;
+  rankMean?: number;
   ref?: number;
   psnr?: number;
 };
@@ -115,6 +116,14 @@ export type Analysis = {
     ratioVsSource: number;
     block?: number[];
     blocksPerFrame?: number;
+    meanRank?: number;
+    kHist?: Record<string, number>;
+    kMax?: number;
+    targetPsnr?: number;
+    trainSteps?: number;
+    basisBytes?: number;
+    coeffBytes?: number;
+    meanJpegBytes?: number;
     kinds?: Record<string, number>;
     lambda?: number;
     skipMae?: number;
@@ -125,15 +134,18 @@ export type Analysis = {
     baselineV11?: BaselineStats;
     baselineV12?: BaselineStats;
     baselineV2?: BaselineStats;
+    baselineV3?: BaselineStats;
   };
   source: {
     clip: string;
+    clipAnalysis?: string;
     reconstruct: string;
     reconstructV0?: string;
     reconstructV1?: string;
     reconstructV11?: string;
     reconstructV12?: string;
     reconstructV2?: string;
+    reconstructV3?: string;
     scope: string;
     duration: number;
     startSec: number;
