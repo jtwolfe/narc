@@ -1,0 +1,101 @@
+export type FrameKind =
+  | "keyframe"
+  | "cut"
+  | "motion"
+  | "residual"
+  | "static"
+  | "flash"
+  | "grain";
+
+export type ShotKind = "locked" | "tracking" | "busy";
+
+export type FrameRow = {
+  i: number;
+  t: number;
+  flux: number;
+  motion: number;
+  residual: number;
+  occlusion: number;
+  hist: number;
+  luma: number;
+  lumaJump: number;
+  dx: number;
+  dy: number;
+  kind: FrameKind;
+  key: boolean;
+  cut: boolean;
+  storedResidual: boolean;
+};
+
+export type ShotRow = {
+  i0: number;
+  i1: number;
+  t0: number;
+  t1: number;
+  kind: ShotKind;
+  keys: number;
+};
+
+export type Analysis = {
+  frames: FrameRow[];
+  shots: ShotRow[];
+  stats: {
+    frames: number;
+    fps: number;
+    width: number;
+    height: number;
+    duration: number;
+    startSec: number;
+    shots: number;
+    keyframes: number;
+    cuts: number;
+    residualsStored: number;
+    sourceBytes: number;
+    modelBytes: number;
+    keyframeBytes: number;
+    residualBytes: number;
+    motionBytes: number;
+    rawBytes: number;
+    reconstructMp4Bytes: number;
+    meanFlux: number;
+    meanResidual: number;
+    meanMotion: number;
+    ratioVsRaw: number;
+    ratioVsSource: number;
+  };
+  source: {
+    clip: string;
+    reconstruct: string;
+    scope: string;
+    duration: number;
+    startSec: number;
+    title: string;
+    credit: string;
+    window: string;
+  };
+};
+
+export function frameAtTime(frames: FrameRow[], t: number): FrameRow {
+  if (!frames.length) {
+    return {
+      i: 0,
+      t: 0,
+      flux: 0,
+      motion: 0,
+      residual: 0,
+      occlusion: 0,
+      hist: 1,
+      luma: 0,
+      lumaJump: 0,
+      dx: 0,
+      dy: 0,
+      kind: "static",
+      key: true,
+      cut: false,
+      storedResidual: false,
+    };
+  }
+  const fps = frames.length > 1 ? 1 / (frames[1].t - frames[0].t || 0.1) : 10;
+  const i = Math.min(frames.length - 1, Math.max(0, Math.round(t * fps)));
+  return frames[i] ?? frames[0];
+}
