@@ -31,6 +31,9 @@ export type FrameRow = {
   residBlocks?: number;
   intraBlocks?: number;
   netBlocks?: number;
+  splitBlocks?: number;
+  cu8Blocks?: number;
+  cu4Blocks?: number;
   ref?: number;
   psnr?: number;
 };
@@ -58,6 +61,9 @@ export type BaselineStats = {
   residualBytes?: number;
   intraBytes?: number;
   netBytes?: number;
+  bitstreamBytes?: number;
+  rawAccountedBytes?: number;
+  gzipControlBytes?: number;
 };
 
 export type Analysis = {
@@ -82,6 +88,11 @@ export type Analysis = {
     motionBytes: number;
     intraBytes?: number;
     netBytes?: number;
+    bitstreamBytes?: number;
+    rawAccountedBytes?: number;
+    gzipControlBytes?: number;
+    syntaxBytes?: number;
+    syntaxZlibBytes?: number;
     rawBytes: number;
     reconstructMp4Bytes: number;
     meanFlux: number;
@@ -96,6 +107,10 @@ export type Analysis = {
     residBlockFrac?: number;
     intraBlockFrac?: number;
     netBlockFrac?: number;
+    splitFrac?: number;
+    cu16Count?: number;
+    cu8Count?: number;
+    cu4Count?: number;
     ratioVsRaw: number;
     ratioVsSource: number;
     block?: number[];
@@ -109,6 +124,7 @@ export type Analysis = {
     baselineV1?: BaselineStats;
     baselineV11?: BaselineStats;
     baselineV12?: BaselineStats;
+    baselineV2?: BaselineStats;
   };
   source: {
     clip: string;
@@ -117,6 +133,7 @@ export type Analysis = {
     reconstructV1?: string;
     reconstructV11?: string;
     reconstructV12?: string;
+    reconstructV2?: string;
     scope: string;
     duration: number;
     startSec: number;
