@@ -1,0 +1,64 @@
+A-W0-s2-k16-t32.5-int8-p16-c0.62  locked     PSNR  35.20/27.75  K=3.50 sat=  12  origin=1.367MB  seamR=1.15  4.6s
+=== v4.t1r sweep start ===
+loading 2160 cached frames from /tmp/bbb/frames-v1
+loaded 2160 in 1.5s
+42 configs
+skip A-W0-s2-k16-t32.5-int8-p16-c0.62 (already recorded)
+A-W1-s2-k16-t32.5-int8-p16-c0.62  locked     PSNR  35.97/27.56  K=2.04 sat=  14  origin=0.861MB  seamR=1.15  5.7s
+A-W2-s2-k16-t32.5-int8-p16-c0.62  locked     PSNR  34.10/29.13  K=3.24 sat=  18  origin=1.278MB  seamR=1.14  4.2s
+B-W0-s0-k16-t32.5-int8-p16-c0.62  locked     PSNR  35.20/27.75  K=3.50 sat=  12  origin=1.367MB  seamR=1.15  1.3s
+B-W1-s0-k16-t32.5-int8-p16-c0.62  locked     PSNR  35.97/27.56  K=2.04 sat=  14  origin=0.861MB  seamR=1.15  1.8s
+B-W2-s0-k16-t32.5-int8-p16-c0.62  locked     PSNR  34.10/29.13  K=3.24 sat=  18  origin=1.279MB  seamR=1.14  1.8s
+B-W0-s8-k16-t32.5-int8-p16-c0.62  locked     PSNR  35.20/27.75  K=3.50 sat=  12  origin=1.367MB  seamR=1.15  8.1s
+B-W1-s8-k16-t32.5-int8-p16-c0.62  locked     PSNR  35.97/27.56  K=2.04 sat=  14  origin=0.861MB  seamR=1.15  7.9s
+B-W2-s8-k16-t32.5-int8-p16-c0.62  locked     PSNR  34.10/29.13  K=3.24 sat=  18  origin=1.278MB  seamR=1.14  10.4s
+B-W0-s32-k16-t32.5-int8-p16-c0.62  locked     PSNR  35.20/27.75  K=3.50 sat=  12  origin=1.367MB  seamR=1.15  28.3s
+B-W1-s32-k16-t32.5-int8-p16-c0.62  locked     PSNR  35.97/27.56  K=2.04 sat=  14  origin=0.861MB  seamR=1.15  26.4s
+=== v4.t1r sweep start ===
+loading 2160 cached frames from /tmp/bbb/frames-v1
+loaded 2160 in 1.2s
+42 configs
+skip A-W0-s2-k16-t32.5-int8-p16-c0.62 (already recorded)
+skip A-W1-s2-k16-t32.5-int8-p16-c0.62 (already recorded)
+skip A-W2-s2-k16-t32.5-int8-p16-c0.62 (already recorded)
+skip B-W0-s0-k16-t32.5-int8-p16-c0.62 (already recorded)
+skip B-W1-s0-k16-t32.5-int8-p16-c0.62 (already recorded)
+skip B-W2-s0-k16-t32.5-int8-p16-c0.62 (already recorded)
+skip B-W0-s8-k16-t32.5-int8-p16-c0.62 (already recorded)
+skip B-W1-s8-k16-t32.5-int8-p16-c0.62 (already recorded)
+skip B-W2-s8-k16-t32.5-int8-p16-c0.62 (already recorded)
+skip B-W0-s32-k16-t32.5-int8-p16-c0.62 (already recorded)
+skip B-W1-s32-k16-t32.5-int8-p16-c0.62 (already recorded)
+B-W2-s32-k16-t32.5-int8-p16-c0.62  locked     PSNR  34.10/29.13  K=3.24 sat=  18  origin=1.278MB  seamR=1.14  35.4s
+B-W0-s0-k16-t32.5-float32-p16-c0.62  locked     PSNR  35.20/27.75  K=3.50 sat=  12  origin=5.432MB  seamR=1.15  1.3s
+B-W1-s0-k16-t32.5-float32-p16-c0.62  locked     PSNR  35.98/27.56  K=2.04 sat=  14  origin=3.522MB  seamR=1.15  1.4s
+B-W2-s0-k16-t32.5-float32-p16-c0.62  locked     PSNR  34.11/29.14  K=3.24 sat=  18  origin=5.239MB  seamR=1.14  1.7s
+C-W0-s2-k8-t32.5-int8-p16-c0.62  locked     PSNR  34.54/27.22  K=3.10 sat=  63  origin=1.203MB  seamR=1.15  2.9s
+C-W1-s2-k8-t32.5-int8-p16-c0.62  locked     PSNR  34.59/27.08  K=1.59 sat=  50  origin=0.667MB  seamR=1.15  2.8s
+C-W2-s2-k8-t32.5-int8-p16-c0.62  locked     PSNR  33.17/28.07  K=2.75 sat=  58  origin=1.069MB  seamR=1.15  3.6s
+C-W0-s2-k32-t32.5-int8-p16-c0.62  locked     PSNR  35.34/27.82  K=3.64 sat=   0  origin=1.423MB  seamR=1.15  3.2s
+C-W1-s2-k32-t32.5-int8-p16-c0.62  locked     PSNR  36.37/27.62  K=2.24 sat=   2  origin=0.947MB  seamR=1.15  3.2s
+C-W2-s2-k32-t32.5-int8-p16-c0.62  locked     PSNR  34.38/29.45  K=3.50 sat=   1  origin=1.390MB  seamR=1.14  4.0s
+C-W0-s2-k16-t30.0-int8-p16-c0.62  locked     PSNR  33.17/25.58  K=2.38 sat=   6  origin=0.939MB  seamR=1.13  3.0s
+C-W1-s2-k16-t30.0-int8-p16-c0.62  locked     PSNR  33.94/25.56  K=1.31 sat=   6  origin=0.571MB  seamR=1.15  2.5s
+C-W2-s2-k16-t30.0-int8-p16-c0.62  locked     PSNR  32.44/26.99  K=2.41 sat=   9  origin=0.962MB  seamR=1.13  3.8s
+C-W0-s2-k16-t35.0-int8-p16-c0.62  locked     PSNR  37.32/30.05  K=4.77 sat=  21  origin=1.843MB  seamR=1.17  3.5s
+C-W1-s2-k16-t35.0-int8-p16-c0.62  locked     PSNR  37.47/29.39  K=2.83 sat=  29  origin=1.156MB  seamR=1.15  4.0s
+C-W2-s2-k16-t35.0-int8-p16-c0.62  locked     PSNR  36.01/31.33  K=4.20 sat=  28  origin=1.645MB  seamR=1.16  4.5s
+C-W0-s2-k16-t32.5-int4-p16-c0.62  locked     PSNR  33.87/27.19  K=3.50 sat=  12  origin=0.466MB  seamR=1.12  3.2s
+C-W1-s2-k16-t32.5-int4-p16-c0.62  locked     PSNR  34.35/26.95  K=2.04 sat=  14  origin=0.300MB  seamR=1.11  3.1s
+C-W2-s2-k16-t32.5-int4-p16-c0.62  locked     PSNR  31.82/28.09  K=3.24 sat=  18  origin=0.434MB  seamR=1.08  4.3s
+D-W0-s2-k16-t32.5-int8-p8-c0.62  locked     PSNR  35.70/27.91  K=2.37 sat=   8  origin=1.323MB  seamR=1.14  5.2s
+D-W1-s2-k16-t32.5-int8-p8-c0.62  locked     PSNR  36.52/27.82  K=1.37 sat=   6  origin=0.881MB  seamR=1.13  5.2s
+D-W2-s2-k16-t32.5-int8-p8-c0.62  locked     PSNR  34.75/30.12  K=2.28 sat=   6  origin=1.318MB  seamR=1.15  6.8s
+D-W0-s2-k16-t32.5-int8-p32-c0.62  locked     PSNR  34.60/27.89  K=5.17 sat=   8  origin=1.676MB  seamR=1.19  3.3s
+D-W1-s2-k16-t32.5-int8-p32-c0.62  locked     PSNR  34.95/27.30  K=2.69 sat=  11  origin=0.897MB  seamR=1.16  2.7s
+D-W2-s2-k16-t32.5-int8-p32-c0.62  locked     PSNR  33.26/28.18  K=4.45 sat=  11  origin=1.446MB  seamR=1.16  3.4s
+D-W0-s2-k16-t32.5-int8-p16-c0.4  locked     PSNR  35.20/27.75  K=3.50 sat=  12  origin=1.367MB  seamR=1.15  3.4s
+D-W1-s2-k16-t32.5-int8-p16-c0.4  locked     PSNR  35.97/27.56  K=2.04 sat=  14  origin=0.861MB  seamR=1.15  3.4s
+D-W2-s2-k16-t32.5-int8-p16-c0.4  locked     PSNR  33.83/26.24  K=6.39 sat=  18  origin=1.318MB  seamR=1.15  4.8s
+D-W0-s2-k16-t32.5-int8-p16-c0.8  locked     PSNR  35.20/27.75  K=3.50 sat=  12  origin=1.367MB  seamR=1.15  3.4s
+D-W1-s2-k16-t32.5-int8-p16-c0.8  locked     PSNR  35.97/27.56  K=2.04 sat=  14  origin=0.861MB  seamR=1.15  3.4s
+D-W2-s2-k16-t32.5-int8-p16-c0.8  locked     PSNR  35.25/31.37  K=2.08 sat=  18  origin=1.509MB  seamR=1.10  2.5s
+wrote /workspace/attempts/v4.t1r/README.md and attempts/v4.t1r.md
+=== done 42 rows ===
