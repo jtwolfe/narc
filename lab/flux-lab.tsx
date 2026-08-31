@@ -362,106 +362,98 @@ export function FluxLab({ data }: { data: Analysis }) {
 
         {(baseline || baselineV1 || baselineV11 || baselineV12 || stats.netBytes != null) ? (
           <section className="mt-3 overflow-x-auto rounded-xl bg-bg-elevated p-4 shadow-border">
-            <h2 className="font-display text-lg font-medium">v0 · v1 · v1.1 · v1.2 · v2</h2>
-            <table className="mt-3 w-full min-w-[52rem] text-left font-mono text-sm">
+            <h2 className="font-display text-lg font-medium">v2 · v1.2 · v1.1 · v1 · v0</h2>
+            <table className="mt-3 w-full text-left font-mono text-sm">
               <thead className="text-xs text-fg-subtle">
                 <tr>
-                  <th className="py-2 pr-3 font-medium"> </th>
-                  <th className="py-2 pr-3 font-medium">v0 global</th>
-                  <th className="py-2 pr-3 font-medium">v1 inverted</th>
-                  <th className="py-2 pr-3 font-medium">v1.1 correct</th>
-                  <th className="py-2 pr-3 font-medium">v1.2 affine</th>
-                  <th className="py-2 font-medium">v2 nets</th>
+                  <th className="sticky left-0 bg-bg-elevated py-2 pr-2 font-medium"> </th>
+                  <th className="py-2 pr-2 font-medium">v2 nets</th>
+                  <th className="py-2 pr-2 font-medium">v1.2 affine</th>
+                  <th className="py-2 pr-2 font-medium">v1.1 correct</th>
+                  <th className="py-2 pr-2 font-medium">v1 inverted</th>
+                  <th className="py-2 font-medium">v0 global</th>
                 </tr>
               </thead>
               <tbody className="text-fg">
                 <tr className="border-t border-border">
-                  <td className="py-2 pr-3 text-fg-muted">Cadence</td>
-                  <td className="py-2 pr-3">{baseline ? `${baseline.fps} fps · ${baseline.frames}` : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV1 ? `${baselineV1.fps} fps · ${baselineV1.frames}` : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV11 ? `${baselineV11.fps} fps · ${baselineV11.frames}` : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV12 ? `${baselineV12.fps} fps · ${baselineV12.frames}` : "—"}</td>
-                  <td className="py-2">{isV2 ? `${stats.fps} fps · ${stats.frames}` : "—"}</td>
+                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Cadence</td>
+                  <td className="py-2 pr-2">{isV2 ? `${stats.fps} fps · ${stats.frames}` : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV12 ? `${baselineV12.fps} fps · ${baselineV12.frames}` : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV11 ? `${baselineV11.fps} fps · ${baselineV11.frames}` : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV1 ? `${baselineV1.fps} fps · ${baselineV1.frames}` : "—"}</td>
+                  <td className="py-2">{baseline ? `${baseline.fps} fps · ${baseline.frames}` : "—"}</td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2 pr-3 text-fg-muted">Keyframes</td>
-                  <td className="py-2 pr-3">{baseline ? baseline.keyframes : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV1 ? baselineV1.keyframes : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV11 ? baselineV11.keyframes : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV12 ? baselineV12.keyframes : "—"}</td>
-                  <td className="py-2">{isV2 ? stats.keyframes : "—"}</td>
+                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Keyframes</td>
+                  <td className="py-2 pr-2">{isV2 ? stats.keyframes : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV12 ? baselineV12.keyframes : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV11 ? baselineV11.keyframes : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV1 ? baselineV1.keyframes : "—"}</td>
+                  <td className="py-2">{baseline ? baseline.keyframes : "—"}</td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2 pr-3 text-fg-muted">Residual frames</td>
-                  <td className="py-2 pr-3">{baseline ? baseline.residualsStored : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV1 ? baselineV1.residualsStored : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV11 ? baselineV11.residualsStored : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV12 ? baselineV12.residualsStored : "—"}</td>
-                  <td className="py-2">{isV2 ? stats.residualsStored : "—"}</td>
+                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Origin bytes</td>
+                  <td className="py-2 pr-2">{isV2 ? formatBytes(stats.modelBytes) : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV12 ? formatBytes(baselineV12.modelBytes) : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV11 ? formatBytes(baselineV11.modelBytes) : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV1 ? formatBytes(baselineV1.modelBytes) : "—"}</td>
+                  <td className="py-2">{baseline ? formatBytes(baseline.modelBytes) : "—"}</td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2 pr-3 text-fg-muted">Origin bytes</td>
-                  <td className="py-2 pr-3">{baseline ? formatBytes(baseline.modelBytes) : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV1 ? formatBytes(baselineV1.modelBytes) : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV11 ? formatBytes(baselineV11.modelBytes) : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV12 ? formatBytes(baselineV12.modelBytes) : "—"}</td>
-                  <td className="py-2">{isV2 ? formatBytes(stats.modelBytes) : "—"}</td>
-                </tr>
-                <tr className="border-t border-border">
-                  <td className="py-2 pr-3 text-fg-muted">Residual + intra</td>
-                  <td className="py-2 pr-3">—</td>
-                  <td className="py-2 pr-3">—</td>
-                  <td className="py-2 pr-3">
-                    {baselineV11?.residualBytes != null && baselineV11.intraBytes != null
-                      ? formatBytes(baselineV11.residualBytes + baselineV11.intraBytes)
-                      : "—"}
-                  </td>
-                  <td className="py-2 pr-3">
-                    {baselineV12?.residualBytes != null && baselineV12.intraBytes != null
-                      ? formatBytes(baselineV12.residualBytes + baselineV12.intraBytes)
-                      : "—"}
-                  </td>
-                  <td className="py-2">
+                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Residual + intra</td>
+                  <td className="py-2 pr-2">
                     {isV2 && stats.residualBytes != null && stats.intraBytes != null
                       ? formatBytes(stats.residualBytes + stats.intraBytes)
                       : "—"}
                   </td>
+                  <td className="py-2 pr-2">
+                    {baselineV12?.residualBytes != null && baselineV12.intraBytes != null
+                      ? formatBytes(baselineV12.residualBytes + baselineV12.intraBytes)
+                      : "—"}
+                  </td>
+                  <td className="py-2 pr-2">
+                    {baselineV11?.residualBytes != null && baselineV11.intraBytes != null
+                      ? formatBytes(baselineV11.residualBytes + baselineV11.intraBytes)
+                      : "—"}
+                  </td>
+                  <td className="py-2 pr-2">—</td>
+                  <td className="py-2">—</td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2 pr-3 text-fg-muted">Net bytes</td>
-                  <td className="py-2 pr-3">—</td>
-                  <td className="py-2 pr-3">—</td>
-                  <td className="py-2 pr-3">—</td>
-                  <td className="py-2 pr-3">—</td>
-                  <td className="py-2">{isV2 && stats.netBytes != null ? formatBytes(stats.netBytes) : "—"}</td>
+                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Net bytes</td>
+                  <td className="py-2 pr-2">{isV2 && stats.netBytes != null ? formatBytes(stats.netBytes) : "—"}</td>
+                  <td className="py-2 pr-2">—</td>
+                  <td className="py-2 pr-2">—</td>
+                  <td className="py-2 pr-2">—</td>
+                  <td className="py-2">—</td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2 pr-3 text-fg-muted">Skip / net / JPEG</td>
-                  <td className="py-2 pr-3">—</td>
-                  <td className="py-2 pr-3">{baselineV1?.skipBlockFrac != null ? `${(baselineV1.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV11?.skipBlockFrac != null ? `${(baselineV11.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV12?.skipBlockFrac != null ? `${(baselineV12.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
-                  <td className="py-2">
+                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Skip / net / JPEG</td>
+                  <td className="py-2 pr-2">
                     {isV2 && stats.skipBlockFrac != null
                       ? `${(stats.skipBlockFrac * 100).toFixed(0)} / ${((stats.netBlockFrac ?? 0) * 100).toFixed(0)} / ${((stats.residBlockFrac ?? 0) * 100).toFixed(0)}%`
                       : "—"}
                   </td>
+                  <td className="py-2 pr-2">{baselineV12?.skipBlockFrac != null ? `${(baselineV12.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV11?.skipBlockFrac != null ? `${(baselineV11.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV1?.skipBlockFrac != null ? `${(baselineV1.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
+                  <td className="py-2">—</td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2 pr-3 text-fg-muted">Mean leftover</td>
-                  <td className="py-2 pr-3">{baseline ? baseline.meanResidual.toFixed(1) : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV1 ? baselineV1.meanResidual.toFixed(1) : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV11 ? baselineV11.meanResidual.toFixed(1) : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV12 ? baselineV12.meanResidual.toFixed(1) : "—"}</td>
-                  <td className="py-2">{isV2 ? stats.meanResidual.toFixed(1) : "—"}</td>
+                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Mean leftover</td>
+                  <td className="py-2 pr-2">{isV2 ? stats.meanResidual.toFixed(1) : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV12 ? baselineV12.meanResidual.toFixed(1) : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV11 ? baselineV11.meanResidual.toFixed(1) : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV1 ? baselineV1.meanResidual.toFixed(1) : "—"}</td>
+                  <td className="py-2">{baseline ? baseline.meanResidual.toFixed(1) : "—"}</td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2 pr-3 text-fg-muted">Mean PSNR</td>
-                  <td className="py-2 pr-3">{baseline?.meanPsnr != null ? `${baseline.meanPsnr.toFixed(1)} dB` : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV1?.meanPsnr != null ? `${baselineV1.meanPsnr.toFixed(1)} dB` : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV11?.meanPsnr != null ? `${baselineV11.meanPsnr.toFixed(1)} dB` : "—"}</td>
-                  <td className="py-2 pr-3">{baselineV12?.meanPsnr != null ? `${baselineV12.meanPsnr.toFixed(1)} dB` : "—"}</td>
-                  <td className="py-2">{isV2 && stats.meanPsnr != null ? `${stats.meanPsnr.toFixed(1)} dB` : "—"}</td>
+                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Mean PSNR</td>
+                  <td className="py-2 pr-2">{isV2 && stats.meanPsnr != null ? `${stats.meanPsnr.toFixed(1)} dB` : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV12?.meanPsnr != null ? `${baselineV12.meanPsnr.toFixed(1)} dB` : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV11?.meanPsnr != null ? `${baselineV11.meanPsnr.toFixed(1)} dB` : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV1?.meanPsnr != null ? `${baselineV1.meanPsnr.toFixed(1)} dB` : "—"}</td>
+                  <td className="py-2">{baseline?.meanPsnr != null ? `${baseline.meanPsnr.toFixed(1)} dB` : "—"}</td>
                 </tr>
               </tbody>
             </table>
