@@ -1,0 +1,151 @@
+=== v4.t2r start ===
+2160 frames 640×360 from /tmp/bbb/frames-640
+detecting shots at 640…
+15 shots in 20.3s
+  S00 [   0, 146) T=146 flux=2.39 locked
+  S01 [ 146, 256) T=110 flux=1.60 locked
+  S02 [ 256, 331) T= 75 flux=2.43 locked
+  S03 [ 331, 466) T=135 flux=5.40 tracking
+  S04 [ 466, 511) T= 45 flux=1.73 locked
+  S05 [ 511, 563) T= 52 flux=1.99 locked
+  S06 [ 563, 719) T=156 flux=6.15 tracking
+  S07 [ 719, 954) T=235 flux=1.71 locked
+  S08 [ 954, 994) T= 40 flux=2.39 locked
+  S09 [ 994,1194) T=200 flux=1.26 locked
+  S10 [1194,1294) T=100 flux=1.98 locked
+  S11 [1294,1504) T=210 flux=4.14 tracking
+  S12 [1504,1631) T=127 flux=2.98 locked
+  S13 [1631,1701) T= 70 flux=6.04 tracking
+  S14 [1701,2160) T=459 flux=1.98 locked
+reps L=S09 T=S08 B=S06  merge S06+S07
+RSS smoke C on S08 T=40 rss0=39MB
+RSS smoke peak 152MB recon (40, 384, 640, 3)
+T-S09-A-s0-k16-t32.5-h16-rgb locked    PSNR  36.75/31.70  SSIM 0.974  K=1.47 sat=   5  orig=1.144MB  seamR=1.12  36.3s  rss=643MB
+T-S09-A-s2-k16-t32.5-h16-rgb locked    PSNR  36.75/31.70  SSIM 0.974  K=1.47 sat=   5  orig=1.144MB  seamR=1.12  38.1s  rss=645MB
+T-S09-A-s8-k16-t32.5-h16-rgb locked    PSNR  36.75/31.70  SSIM 0.974  K=1.47 sat=   5  orig=1.144MB  seamR=1.12  46.4s  rss=645MB
+T-S06-A-s0-k16-t32.5-h16-rgb tracking  PSNR  33.35/30.79  SSIM 0.862  K=8.66 sat=  92  orig=7.016MB  seamR=1.17  29.7s  rss=569MB
+=== v4.t2r start ===
+2160 frames 640×360 from /tmp/bbb/frames-640
+reusing 15 shots
+  S00 [   0, 146) T=146 flux=2.39 locked
+  S01 [ 146, 256) T=110 flux=1.60 locked
+  S02 [ 256, 331) T= 75 flux=2.43 locked
+  S03 [ 331, 466) T=135 flux=5.40 tracking
+  S04 [ 466, 511) T= 45 flux=1.73 locked
+  S05 [ 511, 563) T= 52 flux=1.99 locked
+  S06 [ 563, 719) T=156 flux=6.15 tracking
+  S07 [ 719, 954) T=235 flux=1.71 locked
+  S08 [ 954, 994) T= 40 flux=2.39 locked
+  S09 [ 994,1194) T=200 flux=1.26 locked
+  S10 [1194,1294) T=100 flux=1.98 locked
+  S11 [1294,1504) T=210 flux=4.14 tracking
+  S12 [1504,1631) T=127 flux=2.98 locked
+  S13 [1631,1701) T= 70 flux=6.04 tracking
+  S14 [1701,2160) T=459 flux=1.98 locked
+reps L=S09 T=S03 B=S06  merge S06+S07
+RSS smoke C on S08 T=40 rss0=31MB
+RSS smoke peak 152MB recon (40, 384, 640, 3)
+skip T-S09-A-s0-k16-t32.5-h16-rgb
+skip T-S09-A-s2-k16-t32.5-h16-rgb
+skip T-S09-A-s8-k16-t32.5-h16-rgb
+skip T-S06-A-s0-k16-t32.5-h16-rgb
+T-S06-A-s2-k16-t32.5-h16-rgb tracking  PSNR  33.35/30.79  SSIM 0.862  K=8.66 sat=  92  orig=7.015MB  seamR=1.17  39.1s  rss=567MB
+T-S06-A-s8-k16-t32.5-h16-rgb tracking  PSNR  33.35/30.79  SSIM 0.862  K=8.66 sat=  92  orig=7.015MB  seamR=1.17  63.8s  rss=568MB
+  S09 (locked): 0=36.752 2=36.753 (+0.001) 8=36.753 (+0.001)
+  S06 (tracking): 0=33.350 2=33.351 (+0.001) 8=33.351 (+0.001)
+TRAIN CHOICE steps=2  0≈2≈8 at 640; keep steps=2 for causal vs v4r (not 0)
+35 configs after train choice steps=2
+A-S00-A-s2-k16-t32.5-h16-rgb locked    PSNR  34.02/27.07  SSIM 0.943  K=4.48 sat=  20  orig=3.456MB  seamR=1.12  33.5s  rss=523MB
+A-S01-A-s2-k16-t32.5-h16-rgb locked    PSNR  38.08/33.67  SSIM 0.976  K=1.14 sat=   0  orig=0.774MB  seamR=1.14  20.8s  rss=416MB
+A-S02-A-s2-k16-t32.5-h16-rgb locked    PSNR  36.70/33.48  SSIM 0.968  K=1.37 sat=   2  orig=1.005MB  seamR=1.16  14.5s  rss=333MB
+A-S03-A-s2-k16-t32.5-h16-rgb tracking  PSNR  34.48/28.00  SSIM 0.945  K=4.07 sat=   3  orig=3.100MB  seamR=1.22  30.1s  rss=491MB
+A-S04-A-s2-k16-t32.5-h16-rgb locked    PSNR  38.98/38.18  SSIM 0.985  K=0.05 sat=   0  orig=0.034MB  seamR=1.03  7.9s  rss=237MB
+A-S05-A-s2-k16-t32.5-h16-rgb locked    PSNR  36.65/35.96  SSIM 0.979  K=0.24 sat=   0  orig=0.161MB  seamR=1.02  9.3s  rss=257MB
+A-S06-A-s2-k16-t32.5-h16-rgb tracking  PSNR  33.35/30.79  SSIM 0.862  K=8.66 sat=  92  orig=7.015MB  seamR=1.17  38.5s  rss=569MB
+A-S07-A-s2-k16-t32.5-h16-rgb locked    PSNR  36.46/27.67  SSIM 0.944  K=3.17 sat=  21  orig=2.543MB  seamR=1.12  49.9s  rss=778MB
+A-S08-A-s2-k16-t32.5-h16-rgb locked    PSNR  37.24/35.54  SSIM 0.981  K=0.51 sat=   0  orig=0.350MB  seamR=1.08  7.5s  rss=216MB
+A-S09-A-s2-k16-t32.5-h16-rgb locked    PSNR  36.75/31.70  SSIM 0.974  K=1.47 sat=   5  orig=1.144MB  seamR=1.12  38.0s  rss=660MB
+A-S10-A-s2-k16-t32.5-h16-rgb locked    PSNR  35.41/29.60  SSIM 0.970  K=1.35 sat=  10  orig=0.986MB  seamR=1.04  19.7s  rss=426MB
+A-S11-A-s2-k16-t32.5-h16-rgb tracking  PSNR  34.89/29.07  SSIM 0.958  K=3.62 sat=  10  orig=2.829MB  seamR=1.22  44.9s  rss=688MB
+A-S12-A-s2-k16-t32.5-h16-rgb locked    PSNR  34.34/31.60  SSIM 0.953  K=2.76 sat=   5  orig=2.100MB  seamR=1.13  26.7s  rss=467MB
+A-S13-A-s2-k16-t32.5-h16-rgb tracking  PSNR  34.15/31.08  SSIM 0.940  K=7.08 sat=  94  orig=4.965MB  seamR=1.16  17.0s  rss=321MB
+A-S14-A-s2-k16-t32.5-h16-rgb locked    PSNR  34.05/28.38  SSIM 0.949  K=4.94 sat=  47  orig=4.442MB  seamR=1.15  112.2s  rss=1438MB
+B-S09-B-s2-k16-t32.5-h8-rgb  locked    PSNR  37.82/33.55  SSIM 0.979  K=1.50 sat=  16  orig=4.496MB  seamR=1.05  56.4s  rss=671MB
+C-S09-C-s2-k16-t32.5-h16-rgb locked    PSNR  40.16/31.88  SSIM 0.985  K=0.99 sat=   0  orig=2.731MB  seamR=1.23  49.8s  rss=782MB
+B-S03-B-s2-k16-t32.5-h8-rgb  tracking  PSNR  36.11/30.34  SSIM 0.963  K=4.12 sat=  18  orig=12.174MB  seamR=1.05  53.8s  rss=548MB
+C-S03-C-s2-k16-t32.5-h16-rgb tracking  PSNR  34.60/28.72  SSIM 0.948  K=2.91 sat=   3  orig=6.025MB  seamR=1.20  36.6s  rss=635MB
+B-S06-B-s2-k16-t32.5-h8-rgb  tracking  PSNR  34.49/31.68  SSIM 0.883  K=8.83 sat= 387  orig=27.822MB  seamR=1.04  78.8s  rss=637MB
+C-S06-C-s2-k16-t32.5-h16-rgb tracking  PSNR  33.63/30.89  SSIM 0.879  K=6.40 sat=  32  orig=9.222MB  seamR=1.15  44.9s  rss=715MB
+Q-S09-A-s2-k16-t40.0-h16-rgb locked    PSNR  42.74/38.85  SSIM 0.989  K=3.54 sat=  51  orig=2.664MB  seamR=1.16  41.6s  rss=787MB
+Q-S09-B-s2-k16-t40.0-h8-rgb  locked    PSNR  43.88/40.82  SSIM 0.992  K=3.63 sat= 214  orig=10.545MB  seamR=1.10  71.9s  rss=787MB
+Q-S09-C-s2-k16-t40.0-h16-rgb locked    PSNR  45.16/39.06  SSIM 0.993  K=2.60 sat=  34  orig=4.002MB  seamR=1.26  53.1s  rss=828MB
+Q-S03-A-s2-k16-t40.0-h16-rgb tracking  PSNR  40.76/36.15  SSIM 0.983  K=8.43 sat=  68  orig=6.412MB  seamR=1.22  33.0s  rss=576MB
+Q-S03-B-s2-k16-t40.0-h8-rgb  tracking  PSNR  42.21/38.41  SSIM 0.988  K=8.56 sat= 265  orig=25.322MB  seamR=1.09  64.9s  rss=576MB
+Q-S03-C-s2-k16-t40.0-h16-rgb tracking  PSNR  41.01/36.48  SSIM 0.983  K=6.92 sat=  41  orig=9.153MB  seamR=1.23  39.5s  rss=668MB
+Q-S06-A-s2-k16-t40.0-h16-rgb tracking  PSNR  36.14/33.04  SSIM 0.930  K=14.85 sat= 742  orig=11.894MB  seamR=1.19  41.9s  rss=641MB
+Q-S06-B-s2-k16-t40.0-h8-rgb  tracking  PSNR  37.26/33.89  SSIM 0.943  K=14.92 sat=2918  orig=46.614MB  seamR=1.07  96.1s  rss=782MB
+Q-S06-C-s2-k16-t40.0-h16-rgb tracking  PSNR  37.25/34.14  SSIM 0.945  K=13.92 sat= 646  orig=15.226MB  seamR=1.17  50.2s  rss=806MB
+K-S06-A-s2-k32-t32.5-h16-rgb tracking  PSNR  33.46/30.96  SSIM 0.863  K=8.86 sat=   0  orig=7.178MB  seamR=1.17  38.5s  rss=737MB
+Y-S09-A-s2-k16-t32.5-h16-yuv locked    PSNR  34.52/29.46  SSIM 0.968  K=0.94 sat=   0  orig=0.403MB  seamR=1.10  38.6s  rss=860MB
+M1-S06+S07-A-s2-k16-t32.5-h16-rgb merge-cut PSNR  34.85/28.57  SSIM 0.890  K=7.72 sat=  96  orig=6.893MB  seamR=1.18  98.6s  rss=1402MB
+M1-S06+S07-C-s2-k16-t32.5-h16-rgb merge-cut PSNR  34.92/28.73  SSIM 0.902  K=5.91 sat=  56  orig=9.322MB  seamR=1.15  120.2s  rss=1420MB
+=== v4.t2r start ===
+2160 frames 640×360 from /tmp/bbb/frames-640
+reusing 15 shots
+  S00 [   0, 146) T=146 flux=2.39 locked
+  S01 [ 146, 256) T=110 flux=1.60 locked
+  S02 [ 256, 331) T= 75 flux=2.43 locked
+  S03 [ 331, 466) T=135 flux=5.40 tracking
+  S04 [ 466, 511) T= 45 flux=1.73 locked
+  S05 [ 511, 563) T= 52 flux=1.99 locked
+  S06 [ 563, 719) T=156 flux=6.15 tracking
+  S07 [ 719, 954) T=235 flux=1.71 locked
+  S08 [ 954, 994) T= 40 flux=2.39 locked
+  S09 [ 994,1194) T=200 flux=1.26 locked
+  S10 [1194,1294) T=100 flux=1.98 locked
+  S11 [1294,1504) T=210 flux=4.14 tracking
+  S12 [1504,1631) T=127 flux=2.98 locked
+  S13 [1631,1701) T= 70 flux=6.04 tracking
+  S14 [1701,2160) T=459 flux=1.98 locked
+reps L=S09 T=S03 B=S06  merge S06+S07
+RSS smoke C on S08 T=40 rss0=31MB
+RSS smoke peak 151MB recon (40, 384, 640, 3)
+train_choice resume steps=2 (0≈2≈8 at 640; keep steps=2 for causal vs v4r (not 0))
+35 configs after train choice steps=2
+skip A-S00-A-s2-k16-t32.5-h16-rgb
+skip A-S01-A-s2-k16-t32.5-h16-rgb
+skip A-S02-A-s2-k16-t32.5-h16-rgb
+skip A-S03-A-s2-k16-t32.5-h16-rgb
+skip A-S04-A-s2-k16-t32.5-h16-rgb
+skip A-S05-A-s2-k16-t32.5-h16-rgb
+skip A-S06-A-s2-k16-t32.5-h16-rgb
+skip A-S07-A-s2-k16-t32.5-h16-rgb
+skip A-S08-A-s2-k16-t32.5-h16-rgb
+skip A-S09-A-s2-k16-t32.5-h16-rgb
+skip A-S10-A-s2-k16-t32.5-h16-rgb
+skip A-S11-A-s2-k16-t32.5-h16-rgb
+skip A-S12-A-s2-k16-t32.5-h16-rgb
+skip A-S13-A-s2-k16-t32.5-h16-rgb
+skip A-S14-A-s2-k16-t32.5-h16-rgb
+skip B-S09-B-s2-k16-t32.5-h8-rgb
+skip C-S09-C-s2-k16-t32.5-h16-rgb
+skip B-S03-B-s2-k16-t32.5-h8-rgb
+skip C-S03-C-s2-k16-t32.5-h16-rgb
+skip B-S06-B-s2-k16-t32.5-h8-rgb
+skip C-S06-C-s2-k16-t32.5-h16-rgb
+skip Q-S09-A-s2-k16-t40.0-h16-rgb
+skip Q-S09-B-s2-k16-t40.0-h8-rgb
+skip Q-S09-C-s2-k16-t40.0-h16-rgb
+skip Q-S03-A-s2-k16-t40.0-h16-rgb
+skip Q-S03-B-s2-k16-t40.0-h8-rgb
+skip Q-S03-C-s2-k16-t40.0-h16-rgb
+skip Q-S06-A-s2-k16-t40.0-h16-rgb
+skip Q-S06-B-s2-k16-t40.0-h8-rgb
+skip Q-S06-C-s2-k16-t40.0-h16-rgb
+skip K-S06-A-s2-k32-t32.5-h16-rgb
+skip Y-S09-A-s2-k16-t32.5-h16-yuv
+skip M1-S06+S07-A-s2-k16-t32.5-h16-rgb
+skip M1-S06+S07-C-s2-k16-t32.5-h16-rgb
+M2-S06+S07-A-s2-k16-t32.5-h16-rgb shared-B   PSNR  34.75/28.59  orig=6.718MB  95.4s
+wrote /workspace/attempts/v4.t2r/README.md and attempts/v4.t2r.md
+=== done 41 rows ===

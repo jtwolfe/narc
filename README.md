@@ -16,6 +16,7 @@ This is research, not a product codec. Big Buck Bunny (Blender Foundation, [CC B
 | `attempt/v3-cu-bitstream` | Same warp + nets. CU tree 16→8→4. JPEG on unsplit 16×16 residual; DCT + quant + Exp-Golomb on 8×8/4×4. zlib bitstream. Two byte meters. |
 | `attempt/v4r` | **From scratch.** No warp. Shot-wise 16×16 temporal SVD, JPEG shot mean, int8 + ALS. Kill is ~32 dB PSNR, not bytes. |
 | `attempt/v4.t1r` | Knob sweep on frozen v4r. 3×10s, 42 configs. Training = 0.000 dB. No UI change. |
+| `attempt/v4.t2r` | Native 640×360, per-shot. 16×16 / OLA / global+leaves. 2-shot episode proxy. No UI. |
 
 Next work goes on a **new branch** off the attempt you want to beat. Do not rewrite v0, v1, v1.1, v1.2, v2, or v3 media.
 
@@ -27,6 +28,7 @@ Next work goes on a **new branch** off the attempt you want to beat. Do not rewr
 - v3 notes: [`attempts/v3-cu-bitstream.md`](attempts/v3-cu-bitstream.md)
 - v4r notes: [`attempts/v4r.md`](attempts/v4r.md)
 - v4.t1r notes: [`attempts/v4.t1r.md`](attempts/v4.t1r.md)
+- v4.t2r notes: [`attempts/v4.t2r.md`](attempts/v4.t2r.md)
 
 v4r beat the 32 dB knife (mean 34.7) and grew the origin to 12 MB — spatial bases per shot. Sharing or compressing those bases is the next branch if this raster stays. Raising 320×180 vs the 640×360 source is still open.
 
