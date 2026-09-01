@@ -1,0 +1,194 @@
+=== v4.t3r start ===
+2160 frames 640×360 from /tmp/bbb/frames-640
+15 shots
+  S00 [   0, 146) T=146 flux=2.39 locked
+  S01 [ 146, 256) T=110 flux=1.60 locked
+  S02 [ 256, 331) T= 75 flux=2.43 locked
+  S03 [ 331, 466) T=135 flux=5.40 tracking
+  S04 [ 466, 511) T= 45 flux=1.73 locked
+  S05 [ 511, 563) T= 52 flux=1.99 locked
+  S06 [ 563, 719) T=156 flux=6.15 tracking
+  S07 [ 719, 954) T=235 flux=1.71 locked
+  S08 [ 954, 994) T= 40 flux=2.39 locked
+  S09 [ 994,1194) T=200 flux=1.26 locked
+  S10 [1194,1294) T=100 flux=1.98 locked
+  S11 [1294,1504) T=210 flux=4.14 tracking
+  S12 [1504,1631) T=127 flux=2.98 locked
+  S13 [1631,1701) T= 70 flux=6.04 tracking
+  S14 [1701,2160) T=459 flux=1.98 locked
+reps L=S09 T=S03 B=S06
+RSS smoke disjoint 16 on S08 T=40 rss0=32MB
+RSS smoke peak 104MB recon (40, 384, 640, 3) psnr0=36.50
+Phase P  16 configs
+    tiles 10000/61440 rss=359MB
+    tiles 20000/61440 rss=368MB
+    tiles 30000/61440 rss=399MB
+    tiles 40000/61440 rss=430MB
+    tiles 50000/61440 rss=458MB
+    tiles 60000/61440 rss=480MB
+P-S09-disjoint-p2-s2                       locked    PSNR  38.84/36.33  K=0.58 sat=   0  orig=3.167MB  seamR=1.30  48.7s  rss=515MB
+    tiles 10000/15360 rss=489MB
+P-S09-disjoint-p4-s2                       locked    PSNR  37.95/34.28  K=0.68 sat=   0  orig=1.369MB  seamR=1.11  44.5s  rss=494MB
+P-S09-disjoint-p8-s2                       locked    PSNR  37.31/32.93  K=0.93 sat=   0  orig=1.003MB  seamR=1.12  54.3s  rss=641MB
+P-S09-disjoint-p16-s2                      locked    PSNR  36.75/31.70  K=1.47 sat=   5  orig=1.179MB  seamR=1.12  50.4s  rss=641MB
+P-S09-disjoint-p32-s2                      locked    PSNR  36.25/30.64  K=2.36 sat=   7  orig=1.628MB  seamR=1.13  42.7s  rss=501MB
+P-S09-disjoint-p64-s2                      locked    PSNR  35.70/30.26  K=3.68 sat=   5  orig=2.208MB  seamR=1.04  44.3s  rss=502MB
+    tiles 10000/15360 rss=411MB
+P-S03-disjoint-p4-s2                       tracking  PSNR  35.83/29.95  K=1.92 sat=   0  orig=4.083MB  seamR=1.19  36.1s  rss=414MB
+P-S03-disjoint-p8-s2                       tracking  PSNR  35.03/29.00  K=2.63 sat=   0  orig=2.790MB  seamR=1.21  38.5s  rss=412MB
+P-S03-disjoint-p16-s2                      tracking  PSNR  34.48/28.00  K=4.07 sat=   3  orig=3.139MB  seamR=1.22  32.9s  rss=412MB
+P-S03-disjoint-p32-s2                      tracking  PSNR  33.77/27.50  K=6.67 sat=   8  orig=4.494MB  seamR=1.24  34.5s  rss=412MB
+P-S03-disjoint-p64-s2                      tracking  PSNR  32.54/27.45  K=10.20 sat=  16  orig=6.201MB  seamR=1.04  33.8s  rss=412MB
+    tiles 10000/15360 rss=443MB
+P-S06-disjoint-p4-s2                       tracking  PSNR  34.44/32.53  K=3.06 sat=   0  orig=8.672MB  seamR=1.24  42.2s  rss=444MB
+P-S06-disjoint-p8-s2                       tracking  PSNR  33.80/31.48  K=4.80 sat=   0  orig=5.924MB  seamR=1.20  53.2s  rss=553MB
+P-S06-disjoint-p16-s2                      tracking  PSNR  33.35/30.79  K=8.66 sat=  92  orig=7.038MB  seamR=1.17  48.1s  rss=553MB
+P-S06-disjoint-p32-s2                      tracking  PSNR  31.60/29.06  K=11.97 sat= 116  orig=8.148MB  seamR=1.17  40.3s  rss=443MB
+P-S06-disjoint-p64-s2                      tracking  PSNR  29.33/27.01  K=13.72 sat=  42  orig=8.371MB  seamR=1.03  40.6s  rss=443MB
+LEAF CHOICE 8  S06 4×4 not worth it (+0.64dB, 1.46× bytes) → leaf 8
+Phase S  8 configs
+S-S09-blend-p16-b2-s2                      locked    PSNR  36.81/31.85  K=1.47 sat=   5  orig=1.179MB  seamR=1.12  44.8s  rss=461MB
+S-S09-blend-p16-b4-s2                      locked    PSNR  36.73/31.85  K=1.47 sat=   5  orig=1.179MB  seamR=1.10  45.5s  rss=460MB
+S-S09-overlap-p16-h14-s2                   locked    PSNR  24.57/24.11  K=1.43 sat=   3  orig=1.535MB  seamR=0.82  54.4s  rss=601MB
+S-S09-overlap-p16-h12-s2                   locked    PSNR  24.60/24.22  K=1.47 sat=   8  orig=2.064MB  seamR=0.83  50.6s  rss=460MB
+S-S06-blend-p16-b2-s2                      tracking  PSNR  33.48/30.90  K=8.66 sat=  92  orig=7.038MB  seamR=1.12  43.1s  rss=423MB
+S-S06-blend-p16-b4-s2                      tracking  PSNR  33.40/30.87  K=8.66 sat=  92  orig=7.038MB  seamR=1.12  44.5s  rss=426MB
+S-S06-overlap-p16-h14-s2                   tracking  PSNR  28.69/26.29  K=8.58 sat= 137  orig=9.274MB  seamR=0.95  48.6s  rss=429MB
+S-S06-overlap-p16-h12-s2                   tracking  PSNR  28.81/26.40  K=8.74 sat= 177  orig=12.524MB  seamR=0.95  53.5s  rss=430MB
+Phase J  10 configs
+J-S09-disjoint-p16-jq50-Bjpeg-s2           locked    PSNR  35.19/31.17  K=1.47 sat=   5  orig=0.239MB  seamR=1.19  43.7s  rss=467MB
+J-S09-disjoint-p16-jq70-Bjpeg-s2           locked    PSNR  35.55/31.31  K=1.47 sat=   5  orig=0.261MB  seamR=1.19  42.9s  rss=465MB
+J-S09-disjoint-p16-jq90-Bjpeg-s2           locked    PSNR  35.93/31.44  K=1.47 sat=   5  orig=0.324MB  seamR=1.20  42.7s  rss=464MB
+J-S09-disjoint-p16-Bint4-s2                locked    PSNR  36.23/31.49  K=1.47 sat=   5  orig=0.481MB  seamR=1.10  43.3s  rss=464MB
+J-S09-disjoint-p16-Bint4-Uint4-s2          locked    PSNR  35.45/31.18  K=1.47 sat=   5  orig=0.395MB  seamR=1.08  43.0s  rss=463MB
+J-S06-disjoint-p16-jq50-Bjpeg-s2           tracking  PSNR  32.20/30.31  K=8.66 sat=  92  orig=1.602MB  seamR=1.37  43.0s  rss=427MB
+J-S06-disjoint-p16-jq70-Bjpeg-s2           tracking  PSNR  32.35/30.38  K=8.66 sat=  92  orig=1.713MB  seamR=1.38  42.9s  rss=427MB
+J-S06-disjoint-p16-jq90-Bjpeg-s2           tracking  PSNR  32.51/30.45  K=8.66 sat=  92  orig=2.028MB  seamR=1.39  43.6s  rss=427MB
+J-S06-disjoint-p16-Bint4-s2                tracking  PSNR  31.96/30.19  K=8.66 sat=  92  orig=3.109MB  seamR=1.12  42.0s  rss=427MB
+J-S06-disjoint-p16-Bint4-Uint4-s2          tracking  PSNR  30.27/28.95  K=8.66 sat=  92  orig=2.270MB  seamR=1.09  41.4s  rss=430MB
+Phase Tj 6 configs
+Tj-S06-disjoint-p16-Bint4-Uint4-s0         tracking  PSNR  29.89/28.75  K=8.66 sat=  92  orig=2.282MB  seamR=1.09  32.9s  rss=430MB
+Tj-S06-disjoint-p16-Bint4-Uint4-s2         tracking  PSNR  30.27/28.95  K=8.66 sat=  92  orig=2.270MB  seamR=1.09  41.2s  rss=430MB
+Tj-S06-disjoint-p16-Bint4-Uint4-s8         tracking  PSNR  30.27/28.95  K=8.66 sat=  92  orig=2.271MB  seamR=1.09  71.8s  rss=430MB
+Tj-S09-disjoint-p16-jq50-Bjpeg-s0          locked    PSNR  35.19/31.18  K=1.47 sat=   5  orig=0.240MB  seamR=1.19  40.3s  rss=466MB
+Tj-S09-disjoint-p16-jq50-Bjpeg-s2          locked    PSNR  35.19/31.17  K=1.47 sat=   5  orig=0.239MB  seamR=1.19  42.4s  rss=465MB
+Tj-S09-disjoint-p16-jq50-Bjpeg-s8          locked    PSNR  35.19/31.17  K=1.47 sat=   5  orig=0.239MB  seamR=1.19  51.3s  rss=464MB
+Phase H  8 configs leaf=8
+    H1 leaf=8 fitting 48x80 leaves
+    leaf rows 16/48 rss=324MB
+    leaf rows 32/48 rss=324MB
+    leaf rows 48/48 rss=324MB
+    merge 8→16: 812/960 (0.85)
+    merge 16→32: 143/240 (0.60)
+    merge 32→64: 29/60 (0.48)
+    merge 64→128: 5/15 (0.33)
+    merge full: 0 k=12 bytes 8849863 vs 1228515 mse=35.3
+H1-S09-merge-p8-s2                         locked    PSNR  36.20/30.21  K=2.84 sat=   0  orig=0.960MB  seamR=1.08  77.2s  rss=590MB
+H2-S09-res32-p8-s2                         locked    PSNR  37.33/32.92  K=0.89 sat=   0  orig=0.998MB  seamR=1.12  60.8s  rss=608MB
+    H1 leaf=8 fitting 48x80 leaves
+    leaf rows 16/48 rss=290MB
+    leaf rows 32/48 rss=290MB
+    leaf rows 48/48 rss=290MB
+    merge 8→16: 414/960 (0.43)
+    merge 16→32: 5/240 (0.02)
+    merge 32→64: 0/60 (0.00)
+    merge 64→128: 0/15 (0.00)
+    merge full: 0 k=16 bytes 11798775 vs 3238877 mse=154.5
+H1-S03-merge-p8-s2                         tracking  PSNR  34.60/28.10  K=2.93 sat=   0  orig=2.701MB  seamR=1.17  75.9s  rss=358MB
+H2-S03-res32-p8-s2                         tracking  PSNR  35.04/28.99  K=2.56 sat=   0  orig=2.741MB  seamR=1.21  48.0s  rss=384MB
+    H1 leaf=8 fitting 48x80 leaves
+    leaf rows 16/48 rss=317MB
+    leaf rows 32/48 rss=317MB
+    leaf rows 48/48 rss=317MB
+    merge 8→16: 204/960 (0.21)
+    merge 16→32: 13/240 (0.05)
+    merge 32→64: 1/60 (0.02)
+    merge 64→128: 0/15 (0.00)
+    merge full: 0 k=16 bytes 11799111 vs 6479402 mse=204.4
+H1-S06-merge-p8-s2                         tracking  PSNR  33.62/31.28  K=5.38 sat=   0  orig=5.780MB  seamR=1.17  98.4s  rss=426MB
+H2-S06-res32-p8-s2                         tracking  PSNR  33.77/31.44  K=4.73 sat=   0  orig=5.827MB  seamR=1.19  69.3s  rss=431MB
+    H2-full kRoot=12 tree=9641287 flat=1379952 collapsed=True
+H2-S09-resfull-p16-s2                      locked    PSNR  36.75/31.70  K=1.47 sat=   5  orig=1.179MB  seamR=1.12  59.6s  rss=637MB
+    H2-full kRoot=16 tree=16149883 flat=7757232 collapsed=True
+H2-S06-resfull-p16-s2                      tracking  PSNR  33.35/30.79  K=8.66 sat=  92  orig=7.038MB  seamR=1.17  55.4s  rss=434MB
+wrote /workspace/attempts/v4.t3r/README.md and attempts/v4.t3r.md
+=== done 48 rows ===
+=== v4.t3r start ===
+2160 frames 640×360 from /tmp/bbb/frames-640
+15 shots
+  S00 [   0, 146) T=146 flux=2.39 locked
+  S01 [ 146, 256) T=110 flux=1.60 locked
+  S02 [ 256, 331) T= 75 flux=2.43 locked
+  S03 [ 331, 466) T=135 flux=5.40 tracking
+  S04 [ 466, 511) T= 45 flux=1.73 locked
+  S05 [ 511, 563) T= 52 flux=1.99 locked
+  S06 [ 563, 719) T=156 flux=6.15 tracking
+  S07 [ 719, 954) T=235 flux=1.71 locked
+  S08 [ 954, 994) T= 40 flux=2.39 locked
+  S09 [ 994,1194) T=200 flux=1.26 locked
+  S10 [1194,1294) T=100 flux=1.98 locked
+  S11 [1294,1504) T=210 flux=4.14 tracking
+  S12 [1504,1631) T=127 flux=2.98 locked
+  S13 [1631,1701) T= 70 flux=6.04 tracking
+  S14 [1701,2160) T=459 flux=1.98 locked
+reps L=S09 T=S03 B=S06
+RSS smoke disjoint 16 on S08 T=40 rss0=32MB
+RSS smoke peak 104MB recon (40, 384, 640, 3) psnr0=36.50
+Phase P  16 configs
+skip P-S09-disjoint-p2-s2
+skip P-S09-disjoint-p4-s2
+skip P-S09-disjoint-p8-s2
+skip P-S09-disjoint-p16-s2
+skip P-S09-disjoint-p32-s2
+skip P-S09-disjoint-p64-s2
+skip P-S03-disjoint-p4-s2
+skip P-S03-disjoint-p8-s2
+skip P-S03-disjoint-p16-s2
+skip P-S03-disjoint-p32-s2
+skip P-S03-disjoint-p64-s2
+skip P-S06-disjoint-p4-s2
+skip P-S06-disjoint-p8-s2
+skip P-S06-disjoint-p16-s2
+skip P-S06-disjoint-p32-s2
+skip P-S06-disjoint-p64-s2
+leaf_choice resume leaf=8 (S06 4×4 not worth it (+0.64dB, 1.46× bytes) → leaf 8)
+Phase S  10 configs
+skip S-S09-blend-p16-b2-s2
+skip S-S09-blend-p16-b4-s2
+skip S-S09-overlap-p16-h14-s2
+skip S-S09-overlap-p16-h12-s2
+S-S09-overlap-p16-h8-s2                    locked    PSNR  37.82/33.55  K=1.50 sat=  16  orig=4.541MB  seamR=1.05  71.2s  rss=532MB
+skip S-S06-blend-p16-b2-s2
+skip S-S06-blend-p16-b4-s2
+skip S-S06-overlap-p16-h14-s2
+skip S-S06-overlap-p16-h12-s2
+S-S06-overlap-p16-h8-s2                    tracking  PSNR  34.49/31.68  K=8.83 sat= 387  orig=27.862MB  seamR=1.04  82.7s  rss=421MB
+Phase J  10 configs
+skip J-S09-disjoint-p16-jq50-Bjpeg-s2
+skip J-S09-disjoint-p16-jq70-Bjpeg-s2
+skip J-S09-disjoint-p16-jq90-Bjpeg-s2
+skip J-S09-disjoint-p16-Bint4-s2
+skip J-S09-disjoint-p16-Bint4-Uint4-s2
+skip J-S06-disjoint-p16-jq50-Bjpeg-s2
+skip J-S06-disjoint-p16-jq70-Bjpeg-s2
+skip J-S06-disjoint-p16-jq90-Bjpeg-s2
+skip J-S06-disjoint-p16-Bint4-s2
+skip J-S06-disjoint-p16-Bint4-Uint4-s2
+Phase Tj 6 configs
+skip Tj-S06-disjoint-p16-Bint4-Uint4-s0
+skip Tj-S06-disjoint-p16-Bint4-Uint4-s2
+skip Tj-S06-disjoint-p16-Bint4-Uint4-s8
+skip Tj-S09-disjoint-p16-jq50-Bjpeg-s0
+skip Tj-S09-disjoint-p16-jq50-Bjpeg-s2
+skip Tj-S09-disjoint-p16-jq50-Bjpeg-s8
+Phase H  8 configs leaf=8
+skip H1-S09-merge-p8-s2
+skip H2-S09-res32-p8-s2
+skip H1-S03-merge-p8-s2
+skip H2-S03-res32-p8-s2
+skip H1-S06-merge-p8-s2
+skip H2-S06-res32-p8-s2
+skip H2-S09-resfull-p16-s2
+skip H2-S06-resfull-p16-s2
+wrote /workspace/attempts/v4.t3r/README.md and attempts/v4.t3r.md
+=== done 50 rows ===
