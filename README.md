@@ -19,8 +19,9 @@ This is research, not a product codec. Big Buck Bunny (Blender Foundation, [CC B
 | `attempt/v4.t2r` | Native 640×360, per-shot. 16×16 / OLA / global+leaves. 2-shot episode proxy. No UI. |
 | `attempt/v4.t3r` | Native 640, per-shot. Tile 2–64, cheap seams, JPEG-on-B, exclusive merge + residual trees. No UI. |
 | `attempt/v4.t4r` | 8×8 episode baseline, JPEG-B packing, translation warp, leftover JPEG ceiling. No UI. |
+| `attempt/v4` | **Product encode.** Native 640×360, 8×8 SVD, atlas JPEG-on-B, sparse leftover. Origin 15.23 MB, 33.95 dB. Lab default. |
 
-Next work goes on a **new branch** off the attempt you want to beat. Do not rewrite v0, v1, v1.1, v1.2, v2, or v3 media.
+Next work goes on a **new branch** off the attempt you want to beat. Do not rewrite v0, v1, v1.1, v1.2, v2, v3, or v4r media.
 
 - v0 notes: [`attempts/v0-global-translation.md`](attempts/v0-global-translation.md)
 - v1 notes: [`attempts/v1-block-mc.md`](attempts/v1-block-mc.md)
@@ -33,8 +34,9 @@ Next work goes on a **new branch** off the attempt you want to beat. Do not rewr
 - v4.t2r notes: [`attempts/v4.t2r.md`](attempts/v4.t2r.md)
 - v4.t3r notes: [`attempts/v4.t3r.md`](attempts/v4.t3r.md)
 - v4.t4r notes: [`attempts/v4.t4r.md`](attempts/v4.t4r.md)
+- v4 notes: [`attempts/v4.md`](attempts/v4.md)
 
-v4r beat the 32 dB knife (mean 34.7) and grew the origin to 12 MB — spatial bases per shot. Sharing or compressing those bases is the next branch if this raster stays. Raising 320×180 vs the 640×360 source is still open.
+v4 is the native encode the t-campaigns pointed at: 8×8 temporal SVD, one JPEG atlas of B per shot, leftover JPEG on the frames the SVD still misses. Mean 33.95 dB vs 640×360, origin 15.23 MB (2.14× the H.264 source). v4r stays on the 320×180 toggle as the frozen 16×16 baseline.
 
 ## Layout
 
@@ -45,11 +47,13 @@ encoder/analyze-v1.1.py   v1.1 encoder (corrected motion loop)
 encoder/analyze-v1.2.py   v1.2 encoder (affine + sub-pel)
 encoder/analyze-v2.py     v2 encoder (tiny residual nets)
 encoder/analyze-v3.py     v3 encoder (CU tree + bitstream)
-encoder/v4r/              v4r encoder (separate from v0–v3)
+encoder/v4r/              frozen v4r encoder
 encoder/analyze-v4r.py    thin launcher for encoder/v4r
+encoder/v4/               v4 encoder (native 8×8 + atlas + leftover)
+encoder/analyze-v4.py     thin launcher for encoder/v4
 media/                    that branch's reconstruct + analysis
 lab/                      Fluxfield UI snapshot
 attempts/                 per-attempt notes
 ```
 
-On `attempt/v4r`, `media/stats-v4r.json` holds the probe numbers. The live lab keeps v0 through v3 reconstructs so you can A/B without checking out a branch.
+On `attempt/v4`, `media/stats-v4.json` holds the probe numbers. The live lab keeps v0 through v4r reconstructs so you can A/B without checking out a branch.

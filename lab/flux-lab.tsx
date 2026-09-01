@@ -49,7 +49,7 @@ export function FluxLab({ data }: { data: Analysis }) {
   const [playing, setPlaying] = useState(false);
   const [bitrate, setBitrate] = useState(1200);
   const [heat, setHeat] = useState(false);
-  const [decode, setDecode] = useState<"v4r" | "v3" | "v2" | "v12" | "v11" | "v1" | "v0">("v4r");
+  const [decode, setDecode] = useState<"v4" | "v4r" | "v3" | "v2" | "v12" | "v11" | "v1" | "v0">("v4");
   const [srcRaster, setSrcRaster] = useState<"full" | "analysis">("full");
   const swappingSrc = useRef(false);
   const tRef = useRef(t);
@@ -149,9 +149,10 @@ export function FluxLab({ data }: { data: Analysis }) {
       : "POSIX original · 640×360 · click for 320×180";
 
   const deliveryBytes = Math.round((bitrate * 1000 * duration) / 8);
+  const heatBase = decode === "v4" ? "/media/v4/heatmaps" : "/media/heatmaps";
   const heatSrc =
     frame.key || frame.cut || frame.residual > 10
-      ? `/media/heatmaps/${String(frame.i).padStart(4, "0")}.jpg`
+      ? `${heatBase}/${String(frame.i).padStart(4, "0")}.jpg`
       : null;
   const recSrc =
     decode === "v0"
@@ -166,12 +167,16 @@ export function FluxLab({ data }: { data: Analysis }) {
               ? (source.reconstructV2 ?? "/media/v2/reconstruct.mp4")
               : decode === "v3"
                 ? (source.reconstructV3 ?? "/media/v3/reconstruct.mp4")
-                : source.reconstruct;
+                : decode === "v4r"
+                  ? (source.reconstructV4r ?? "/media/v4r/reconstruct.mp4")
+                  : source.reconstruct;
   const baseline = stats.baseline;
   const baselineV1 = stats.baselineV1;
   const baselineV11 = stats.baselineV11;
+  const isV4 = (stats.attempt ?? "") === "v4";
   const isV4r = (stats.attempt ?? "").includes("v4r");
   const isV3 = (stats.attempt ?? "").includes("v3");
+  const baselineV4r = stats.baselineV4r;
   const baselineV12 = stats.baselineV12;
   const baselineV2 = stats.baselineV2;
   const baselineV3 = stats.baselineV3 ?? (!isV4r && isV3
@@ -206,7 +211,9 @@ export function FluxLab({ data }: { data: Analysis }) {
               ? "Model decode · v2"
               : decode === "v3"
                 ? "Model decode · v3"
-                : "Model decode · v4r";
+                : decode === "v4r"
+                  ? "Model decode · v4r"
+                  : "Model decode · v4";
   const decodeSub =
     decode === "v0"
       ? "Global translation · 10 fps"
@@ -220,7 +227,9 @@ export function FluxLab({ data }: { data: Analysis }) {
               ? "Tiny residual nets · 24 fps"
               : decode === "v3"
                 ? "CU tree + bitstream · 24 fps"
-                : "Patch temporal model · 24 fps";
+                : decode === "v4r"
+                  ? "16×16 temporal SVD · 320×180"
+                  : "8×8 SVD · atlas B · leftover · 640×360";
 
   const strip = useMemo(() => {
     const out: number[] = [];
@@ -242,10 +251,10 @@ export function FluxLab({ data }: { data: Analysis }) {
             </h1>
             <p className="mt-2 max-w-xl text-sm text-pretty text-fg-muted">
               {source.title} · {source.window}. Attempt{" "}
-              <span className="text-fg">{stats.attempt ?? "v4r"}</span>
-              : no warp. Each 16×16 is a temporal model on the pixels
-              themselves — shot mean JPEG plus a rank-K SVD, int8, ALS
-              refine. Toggle back through v3, v2, v1.2, v1.1, broken v1, and v0.
+              <span className="text-fg">{stats.attempt ?? "v4"}</span>
+              : 8×8 temporal SVD at native 640×360, one JPEG atlas of the
+              spatial bases per shot, leftover JPEG where the SVD misses.
+              K′ peels rank at decode. Toggle back through v4r, v3, v2, v1.2, v1.1, broken v1, and v0.
             </p>
           </div>
           <p className="font-mono text-xs leading-relaxed text-fg-subtle sm:text-right">
@@ -291,7 +300,7 @@ export function FluxLab({ data }: { data: Analysis }) {
             videoRef={recRef}
             src={recSrc}
             muted
-            overlay={heat && (decode === "v4r" || decode === "v3") && heatSrc ? heatSrc : null}
+            overlay={heat && (decode === "v4" || decode === "v4r" || decode === "v3") && heatSrc ? heatSrc : null}
             onTime={(v) => {
               setT(v);
               if (srcRef.current && Math.abs(srcRef.current.currentTime - v) > 0.12) {
@@ -331,6 +340,7 @@ export function FluxLab({ data }: { data: Analysis }) {
             <div className="flex min-h-11 flex-wrap rounded-md bg-bg-subtle p-0.5" role="group" aria-label="Decoder version">
               {(
                 [
+                  ["v4", "v4"],
                   ["v4r", "v4r"],
                   ["v3", "v3"],
                   ["v2", "v2"],
@@ -374,19 +384,19 @@ export function FluxLab({ data }: { data: Analysis }) {
 
         <div className="mt-6 grid gap-3 md:grid-cols-4">
           <StatCard
-            label="v4r origin"
-            value={isV4r ? formatBytes(stats.bitstreamBytes ?? stats.modelBytes) : "encoding…"}
-            hint="zlib(int8 patch SVD + JPEG shot means)"
+            label="v4 origin"
+            value={isV4 ? formatBytes(stats.bitstreamBytes ?? stats.modelBytes) : "encoding…"}
+            hint="zlib(8×8 U + atlas B + leftover + JPEG μ)"
           />
           <StatCard
-            label="v3 packed (frozen)"
-            value={baselineV3 ? formatBytes(baselineV3.bitstreamBytes ?? baselineV3.modelBytes) : "—"}
-            hint="CU tree bitstream · 32.8 dB"
+            label="v4r origin (frozen)"
+            value={baselineV4r ? formatBytes(baselineV4r.bitstreamBytes ?? baselineV4r.modelBytes) : "—"}
+            hint="16×16 int8 SVD · 320×180 · 34.7 dB"
           />
           <StatCard
             label="Mean reconstruct PSNR"
-            value={isV4r && stats.meanPsnr ? `${stats.meanPsnr.toFixed(1)} dB` : "—"}
-            hint={isV4r && stats.minPsnr != null ? `min ${stats.minPsnr.toFixed(1)} · median ${stats.medianPsnr?.toFixed(1)}` : "v4r vs analysis JPEG"}
+            value={isV4 && stats.meanPsnr ? `${stats.meanPsnr.toFixed(1)} dB` : "—"}
+            hint={isV4 && stats.minPsnr != null ? `min ${stats.minPsnr.toFixed(1)} · median ${stats.medianPsnr?.toFixed(1)}` : "v4 vs native 640×360"}
           />
           <StatCard
             label="H.264 source clip"
@@ -397,41 +407,42 @@ export function FluxLab({ data }: { data: Analysis }) {
 
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-8">
           <Mini label="Shots" value={String(stats.shots)} />
-          <Mini label="Shot-start keys" value={String(stats.keyframes)} />
+          <Mini label="8×8 tiles" value={String(stats.blocksPerFrame ?? 3840)} />
           <Mini
-            label="K=0 patches"
-            value={isV4r && stats.skipBlockFrac != null ? `${(stats.skipBlockFrac * 100).toFixed(0)}%` : "—"}
+            label="K=0 tiles"
+            value={isV4 && stats.skipBlockFrac != null ? `${(stats.skipBlockFrac * 100).toFixed(0)}%` : "—"}
           />
           <Mini
             label="Mean rank"
-            value={isV4r && stats.meanRank != null ? stats.meanRank.toFixed(2) : "—"}
+            value={isV4 && stats.meanRank != null ? stats.meanRank.toFixed(2) : "—"}
           />
           <Mini
-            label="Spatial bases"
-            value={isV4r && stats.basisBytes != null ? formatBytes(stats.basisBytes) : "—"}
+            label="Atlas B"
+            value={isV4 && stats.atlasBytes != null ? formatBytes(stats.atlasBytes) : "—"}
           />
           <Mini
-            label="Temporal U"
-            value={isV4r && stats.coeffBytes != null ? formatBytes(stats.coeffBytes) : "—"}
+            label="Leftover JPEG"
+            value={isV4 && stats.leftoverBytes != null ? formatBytes(stats.leftoverBytes) : "—"}
           />
           <Mini
             label="Shot-mean JPEG"
-            value={isV4r && stats.meanJpegBytes != null ? formatBytes(stats.meanJpegBytes) : "—"}
+            value={isV4 && stats.meanJpegBytes != null ? formatBytes(stats.meanJpegBytes) : "—"}
           />
           <Mini
-            label="Raw-accounted"
-            value={isV4r && stats.rawAccountedBytes != null ? formatBytes(stats.rawAccountedBytes) : "—"}
+            label="vs H.264"
+            value={isV4 ? `${(1 / Math.max(stats.ratioVsSource, 0.001)).toFixed(2)}×` : "—"}
           />
         </div>
 
         {(baseline || baselineV1 || baselineV11 || baselineV12 || baselineV2 || stats.bitstreamBytes != null) ? (
           <section className="mt-3 overflow-x-auto rounded-xl bg-bg-elevated p-4 shadow-border">
-            <h2 className="font-display text-lg font-medium">v4r · v3 · v2 · v1.2 · v1.1 · v1 · v0</h2>
+            <h2 className="font-display text-lg font-medium">v4 · v4r · v3 · v2 · v1.2 · v1.1 · v1 · v0</h2>
             <table className="mt-3 w-full text-left font-mono text-sm">
               <thead className="text-xs text-fg-subtle">
                 <tr>
                   <th className="sticky left-0 bg-bg-elevated py-2 pr-2 font-medium"> </th>
-                  <th className="py-2 pr-2 font-medium">v4r temporal</th>
+                  <th className="py-2 pr-2 font-medium">v4 native</th>
+                  <th className="py-2 pr-2 font-medium">v4r 320</th>
                   <th className="py-2 pr-2 font-medium">v3 tree</th>
                   <th className="py-2 pr-2 font-medium">v2 nets</th>
                   <th className="py-2 pr-2 font-medium">v1.2 affine</th>
@@ -443,7 +454,8 @@ export function FluxLab({ data }: { data: Analysis }) {
               <tbody className="text-fg">
                 <tr className="border-t border-border">
                   <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Cadence</td>
-                  <td className="py-2 pr-2">{isV4r ? `${stats.fps} fps · ${stats.frames}` : "—"}</td>
+                  <td className="py-2 pr-2">{isV4 ? `${stats.fps} fps · ${stats.frames}` : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV4r ? `${baselineV4r.fps} fps · ${baselineV4r.frames}` : isV4r ? `${stats.fps} fps · ${stats.frames}` : "—"}</td>
                   <td className="py-2 pr-2">{baselineV3 ? `${baselineV3.fps} fps · ${baselineV3.frames}` : "—"}</td>
                   <td className="py-2 pr-2">{baselineV2 ? `${baselineV2.fps} fps · ${baselineV2.frames}` : "—"}</td>
                   <td className="py-2 pr-2">{baselineV12 ? `${baselineV12.fps} fps · ${baselineV12.frames}` : "—"}</td>
@@ -452,18 +464,20 @@ export function FluxLab({ data }: { data: Analysis }) {
                   <td className="py-2">{baseline?.fps != null ? `${baseline.fps} fps · ${baseline.frames}` : "—"}</td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Keyframes</td>
-                  <td className="py-2 pr-2">{isV4r ? stats.keyframes : "—"}</td>
-                  <td className="py-2 pr-2">{baselineV3 ? baselineV3.keyframes : "—"}</td>
-                  <td className="py-2 pr-2">{baselineV2 ? baselineV2.keyframes : "—"}</td>
-                  <td className="py-2 pr-2">{baselineV12 ? baselineV12.keyframes : "—"}</td>
-                  <td className="py-2 pr-2">{baselineV11 ? baselineV11.keyframes : "—"}</td>
-                  <td className="py-2 pr-2">{baselineV1 ? baselineV1.keyframes : "—"}</td>
-                  <td className="py-2">{baseline?.keyframes ?? "—"}</td>
+                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Raster</td>
+                  <td className="py-2 pr-2">{isV4 ? `${stats.width}×${stats.height}` : "—"}</td>
+                  <td className="py-2 pr-2">320×180</td>
+                  <td className="py-2 pr-2">320×180</td>
+                  <td className="py-2 pr-2">320×180</td>
+                  <td className="py-2 pr-2">320×180</td>
+                  <td className="py-2 pr-2">320×180</td>
+                  <td className="py-2 pr-2">320×180</td>
+                  <td className="py-2">320×180</td>
                 </tr>
                 <tr className="border-t border-border">
                   <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Origin bytes</td>
-                  <td className="py-2 pr-2">{isV4r ? formatBytes(stats.bitstreamBytes ?? stats.modelBytes) : "—"}</td>
+                  <td className="py-2 pr-2">{isV4 ? formatBytes(stats.bitstreamBytes ?? stats.modelBytes) : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV4r ? formatBytes(baselineV4r.bitstreamBytes ?? baselineV4r.modelBytes) : isV4r ? formatBytes(stats.bitstreamBytes ?? stats.modelBytes) : "—"}</td>
                   <td className="py-2 pr-2">{baselineV3 ? formatBytes(baselineV3.bitstreamBytes ?? baselineV3.modelBytes) : "—"}</td>
                   <td className="py-2 pr-2">{baselineV2 ? formatBytes(baselineV2.modelBytes) : "—"}</td>
                   <td className="py-2 pr-2">{baselineV12 ? formatBytes(baselineV12.modelBytes) : "—"}</td>
@@ -473,7 +487,8 @@ export function FluxLab({ data }: { data: Analysis }) {
                 </tr>
                 <tr className="border-t border-border">
                   <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">What the bytes are</td>
-                  <td className="py-2 pr-2">{isV4r ? "int8 U,B + JPEG μ" : "—"}</td>
+                  <td className="py-2 pr-2">{isV4 ? "atlas B + U + leftover" : "—"}</td>
+                  <td className="py-2 pr-2">int8 U,B + JPEG μ</td>
                   <td className="py-2 pr-2">{baselineV3 ? "JPEG + zlib syntax" : "—"}</td>
                   <td className="py-2 pr-2">{baselineV2?.netBytes != null ? formatBytes(baselineV2.netBytes) + " nets" : "—"}</td>
                   <td className="py-2 pr-2">—</td>
@@ -482,18 +497,9 @@ export function FluxLab({ data }: { data: Analysis }) {
                   <td className="py-2">—</td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">K=0 / skip</td>
-                  <td className="py-2 pr-2">{isV4r && stats.skipBlockFrac != null ? `${(stats.skipBlockFrac * 100).toFixed(0)}% K=0` : "—"}</td>
-                  <td className="py-2 pr-2">{baselineV3?.skipBlockFrac != null ? `${(baselineV3.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
-                  <td className="py-2 pr-2">{baselineV2?.skipBlockFrac != null ? `${(baselineV2.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
-                  <td className="py-2 pr-2">{baselineV12?.skipBlockFrac != null ? `${(baselineV12.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
-                  <td className="py-2 pr-2">{baselineV11?.skipBlockFrac != null ? `${(baselineV11.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
-                  <td className="py-2 pr-2">{baselineV1?.skipBlockFrac != null ? `${(baselineV1.skipBlockFrac * 100).toFixed(0)}% skip` : "—"}</td>
-                  <td className="py-2">—</td>
-                </tr>
-                <tr className="border-t border-border">
                   <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Geometry</td>
-                  <td className="py-2 pr-2">{isV4r ? "none · temporal SVD" : "—"}</td>
+                  <td className="py-2 pr-2">{isV4 ? "none · 8×8 SVD" : "—"}</td>
+                  <td className="py-2 pr-2">none · 16×16 SVD</td>
                   <td className="py-2 pr-2">affine + CU 16</td>
                   <td className="py-2 pr-2">16×16 + nets</td>
                   <td className="py-2 pr-2">16×16 affine</td>
@@ -503,7 +509,8 @@ export function FluxLab({ data }: { data: Analysis }) {
                 </tr>
                 <tr className="border-t border-border">
                   <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Mean leftover</td>
-                  <td className="py-2 pr-2">{isV4r ? stats.meanResidual.toFixed(1) : "—"}</td>
+                  <td className="py-2 pr-2">{isV4 ? stats.meanResidual.toFixed(1) : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV4r ? baselineV4r.meanResidual.toFixed(1) : isV4r ? stats.meanResidual.toFixed(1) : "—"}</td>
                   <td className="py-2 pr-2">{baselineV3 ? baselineV3.meanResidual.toFixed(1) : "—"}</td>
                   <td className="py-2 pr-2">{baselineV2 ? baselineV2.meanResidual.toFixed(1) : "—"}</td>
                   <td className="py-2 pr-2">{baselineV12 ? baselineV12.meanResidual.toFixed(1) : "—"}</td>
@@ -513,7 +520,8 @@ export function FluxLab({ data }: { data: Analysis }) {
                 </tr>
                 <tr className="border-t border-border">
                   <td className="sticky left-0 bg-bg-elevated py-2 pr-2 text-fg-muted">Mean PSNR</td>
-                  <td className="py-2 pr-2">{isV4r && stats.meanPsnr != null ? `${stats.meanPsnr.toFixed(1)} dB` : "—"}</td>
+                  <td className="py-2 pr-2">{isV4 && stats.meanPsnr != null ? `${stats.meanPsnr.toFixed(1)} dB` : "—"}</td>
+                  <td className="py-2 pr-2">{baselineV4r?.meanPsnr != null ? `${baselineV4r.meanPsnr.toFixed(1)} dB` : isV4r && stats.meanPsnr != null ? `${stats.meanPsnr.toFixed(1)} dB` : "—"}</td>
                   <td className="py-2 pr-2">{baselineV3?.meanPsnr != null ? `${baselineV3.meanPsnr.toFixed(1)} dB` : "—"}</td>
                   <td className="py-2 pr-2">{baselineV2?.meanPsnr != null ? `${baselineV2.meanPsnr.toFixed(1)} dB` : "—"}</td>
                   <td className="py-2 pr-2">{baselineV12?.meanPsnr != null ? `${baselineV12.meanPsnr.toFixed(1)} dB` : "—"}</td>
@@ -523,6 +531,20 @@ export function FluxLab({ data }: { data: Analysis }) {
                 </tr>
               </tbody>
             </table>
+            {isV4 && stats.kPrime ? (
+              <p className="mt-3 font-mono text-xs text-fg-subtle">
+                K′ peel (SVD only, leftover not applied
+                {stats.kPrime["8"] && stats.kPrime["16"] && stats.kPrime["8"].meanPsnr > stats.kPrime["16"].meanPsnr
+                  ? "; K′=8 skips S07+S14 so it is not episode-wide"
+                  : ""}
+                ):{" "}
+                {(["0", "1", "2", "4", "8", "16"] as const).map((k) => (
+                  <span key={k} className="mr-3">
+                    {k}={stats.kPrime?.[k]?.meanPsnr.toFixed(1)} dB
+                  </span>
+                ))}
+              </p>
+            ) : null}
           </section>
         ) : null}
 
@@ -566,12 +588,12 @@ export function FluxLab({ data }: { data: Analysis }) {
               {frame.kind === "cut"
                 ? "Histogram break. New shot, new temporal model. The previous patch bases do not carry over."
                 : frame.key
-                  ? "Shot start. The origin stores a JPEG of this shot's temporal mean, then rank-K factors on the leftover."
+                  ? "Shot start. JPEG of the shot mean, then 8×8 rank-K factors. Spatial bases live in one atlas JPEG per shot."
                   : frame.kind === "residual"
-                    ? "High leftover after the patch SVD. These tiles sat at K_max and still could not fit a 16×16 that changes appearance inside the shot."
+                    ? "High leftover after the 8×8 SVD. A leftover JPEG is stored on this frame if the miss is above the knife."
                     : frame.kind === "motion"
-                      ? "Flux is high but the temporal model is doing the work — no warp, no MV. Rank K on this shot is what eats the motion."
-                      : "Low flux. Most 16×16 tiles are K=0: the shot-mean JPEG already clears 32.5 dB."}
+                      ? "Flux is high but there is still no warp. Rank K plus leftover JPEGs absorb the motion."
+                      : "Low flux. Most 8×8 tiles are K=0: the shot-mean JPEG already clears 32.5 dB."}
             </p>
           </section>
 
@@ -611,22 +633,22 @@ export function FluxLab({ data }: { data: Analysis }) {
           <h2 className="font-display text-lg font-medium">How this attempt encodes</h2>
           <ol className="mt-4 grid gap-3 text-sm text-fg-muted sm:grid-cols-3">
             <li>
-              <span className="block font-medium text-fg">1. No warp</span>
-              v0–v3 predicted a frame from a previous recon. v4r does not.
-              A histogram cut starts a new shot. Inside the shot, every 16×16
-              is its own temporal model on the source pixels.
+              <span className="block font-medium text-fg">1. Shot mean + 8×8 SVD</span>
+              A histogram cut starts a new shot. Inside it, every 8×8 is a
+              temporal model: JPEG of the shot mean, then rank-K SVD until
+              32.5 dB. No warp. K′ drops rank at decode.
             </li>
             <li>
-              <span className="block font-medium text-fg">2. Rank-K patch SVD</span>
-              Shot-mean JPEG, then a thin SVD of the leftover. K grows until
-              local MSE sits under 32.5 dB, cap 16. Int8 U and B, then two
-              ALS steps — that is the training. Still patches stay at K=0.
+              <span className="block font-medium text-fg">2. Atlas of B</span>
+              All eigenpatches in the shot pack into one JPEG mosaic, not
+              thousands of tiny JPEGs. That is the size lever the 16×16
+              probes found and the 8×8 per-tile JPEGs lost.
             </li>
             <li>
-              <span className="block font-medium text-fg">3. Packed origin</span>
-              zlib of the factors plus the shot-mean JPEGs. Kill was PSNR
-              ≈ 32 dB on a 10s probe, then the full 90s. Bytes are a meter,
-              not the knife: spatial bases per shot are expensive.
+              <span className="block font-medium text-fg">3. Sparse leftover</span>
+              Where the SVD still misses (busy tiles, every 8th frame above
+              3.5 MAE), a leftover JPEG lands in the origin. Reconstruct is
+              native 640×360 24 fps. Bytes are a meter; PSNR is the knife.
             </li>
           </ol>
         </section>

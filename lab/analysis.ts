@@ -124,6 +124,12 @@ export type Analysis = {
     basisBytes?: number;
     coeffBytes?: number;
     meanJpegBytes?: number;
+    atlasBytes?: number;
+    leftoverBytes?: number;
+    atlasQ?: number;
+    leftoverQ?: number;
+    leftoverStride?: number;
+    kPrime?: Record<string, { meanPsnr: number; minPsnr: number }>;
     kinds?: Record<string, number>;
     lambda?: number;
     skipMae?: number;
@@ -135,11 +141,13 @@ export type Analysis = {
     baselineV12?: BaselineStats;
     baselineV2?: BaselineStats;
     baselineV3?: BaselineStats;
+    baselineV4r?: BaselineStats;
   };
   source: {
     clip: string;
     clipAnalysis?: string;
     reconstruct: string;
+    reconstructV4r?: string;
     reconstructV0?: string;
     reconstructV1?: string;
     reconstructV11?: string;
