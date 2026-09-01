@@ -320,8 +320,8 @@ export function FluxLab({ data }: { data: Analysis }) {
       <header className="border-b border-border px-4 py-5 sm:px-8">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-mono text-xs tracking-[0.22em] text-fg-subtle uppercase">
-              Workarr encode lab
+            <p className="font-mono text-xs tracking-[0.14em] text-fg-subtle">
+              Not A Real Codec (NARC) lab
             </p>
             <h1 className="font-display mt-1 text-3xl font-medium tracking-tight text-balance sm:text-4xl">
               Fluxfield
