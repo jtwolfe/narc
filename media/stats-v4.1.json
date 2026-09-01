@@ -84,8 +84,8 @@
       "minPsnr": 27.166
     },
     "full": {
-      "meanPsnr": 33.95,
-      "minPsnr": 28.05
+      "meanPsnr": 33.818,
+      "minPsnr": 27.166
     }
   },
   "rawBytes": 1492992000,
@@ -249,5 +249,35 @@
     "bitstreamBytes": 15229895,
     "rawAccountedBytes": 23771408,
     "gzipControlBytes": 15229886
+  },
+  "kPrimeLeft": {
+    "0": {
+      "meanPsnr": 20.865,
+      "minPsnr": 11.183
+    },
+    "1": {
+      "meanPsnr": 28.612,
+      "minPsnr": 21.917
+    },
+    "2": {
+      "meanPsnr": 31.275,
+      "minPsnr": 24.474
+    },
+    "4": {
+      "meanPsnr": 33.232,
+      "minPsnr": 27.427
+    },
+    "8": {
+      "meanPsnr": 33.902,
+      "minPsnr": 28.055
+    },
+    "16": {
+      "meanPsnr": 33.949,
+      "minPsnr": 28.055
+    },
+    "full": {
+      "meanPsnr": 33.95,
+      "minPsnr": 28.05
+    }
   }
 }

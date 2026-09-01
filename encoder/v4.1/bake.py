@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Decode the frozen v4 NAR4 origin at selectable K′ and bake lab reconstructs.
+"""Decode the frozen v4 NAR4 origin at selectable K′ ± leftover and bake lab reconstructs.
 
-Leftover JPEG is applied only on the full rung — it was computed against full K.
-v4 media under public/media/v4/ is not rewritten.
+Leftover JPEG is the origin residual (vs full rank). The lab can apply it on
+any peel so K′ and leftover are independent decode switches. Origin bytes
+do not change. v4 media under public/media/v4/ is not rewritten.
 """
 from __future__ import annotations
 
@@ -223,6 +224,15 @@ def ffmpeg_dir(src_dir: Path, dest: Path) -> None:
     )
 
 
+def summarize(arr: list[float]) -> dict:
+    ordered = sorted(arr)
+    return {
+        "meanPsnr": round(float(sum(arr) / len(arr)), 3),
+        "minPsnr": round(float(ordered[0]), 3),
+        "medianPsnr": round(float(ordered[len(ordered) // 2]), 3),
+    }
+
+
 def self_test(model: dict, files: list[Path]) -> None:
     ref_dir = TMP / "recon-v4"
     sh = model["shots"][0]
@@ -246,54 +256,82 @@ def self_test(model: dict, files: list[Path]) -> None:
     print("self-test ok")
 
 
-def bake(model: dict, files: list[Path]) -> dict[str, dict]:
-    rungs: list[tuple[str, int | None]] = [(str(k), k) for k in K_RUNGS]
-    dirs = {name: TMP / f"recon-v41-{name}" for name, _ in rungs}
+def load_off_stats() -> dict[str, dict]:
+    path = MEDIA / "stats-v4.1.json"
+    if not path.exists():
+        path = OUT / "stats.json"
+    s = json.loads(path.read_text())
+    kp = s["kPrime"]
+    out = {str(k): dict(kp[str(k)]) for k in K_RUNGS}
+    out["16"]["meanPsnr"] = float(kp["16"]["meanPsnr"])
+    out["16"]["minPsnr"] = float(kp["16"]["minPsnr"])
+    return out
+
+
+def bake_leftover_on(model: dict, files: list[Path]) -> dict[str, dict]:
+    """Paint each peel, apply origin leftover, bake reconstruct-k*-left.mp4.
+
+    K′=16 leftover-on is the frozen v4 reconstruct (same decode). Score it,
+    then copy rather than re-ffmpeg.
+    """
+    write_rungs = (0, 1, 2, 4, 8)
+    dirs = {str(k): TMP / f"recon-v41-k{k}-left" for k in write_rungs}
     for d in dirs.values():
+        if d.exists():
+            shutil.rmtree(d)
         d.mkdir(parents=True, exist_ok=True)
-    acc: dict[str, list[float]] = {name: [] for name, _ in rungs}
+    acc: dict[str, list[float]] = {str(k): [] for k in K_RUNGS}
     t0 = time.time()
     for si, sh in enumerate(model["shots"]):
         i0, i1 = sh["i0"], sh["i1"]
         src = load_shot_src(files, i0, i1)
         tlen = i1 - i0
-        print(f"  decode S{si:02d} [{i0},{i1}) T={tlen}", flush=True)
-        for name, kp in rungs:
+        print(f"  leftover-on S{si:02d} [{i0},{i1}) T={tlen}", flush=True)
+        for k in K_RUNGS:
             rec = np.repeat(sh["mu"][None], tlen, 0)
-            paint(rec, sh["mu"], sh["items"], kp)
-            dest = dirs[name]
-            for t in range(tlen):
-                Image.fromarray(rec[t, :H_DISP]).save(dest / f"{i0 + t:04d}.jpg", "JPEG", quality=92)
-                acc[name].append(psnr(src[t], rec[t]))
+            paint(rec, sh["mu"], sh["items"], k)
+            apply_leftover(rec, sh["leftover"])
+            if k in write_rungs:
+                dest = dirs[str(k)]
+                for t in range(tlen):
+                    Image.fromarray(rec[t, :H_DISP]).save(dest / f"{i0 + t:04d}.jpg", "JPEG", quality=92)
+                    acc[str(k)].append(psnr(src[t], rec[t]))
+            else:
+                for t in range(tlen):
+                    acc[str(k)].append(psnr(src[t], rec[t]))
             del rec
+        for it in sh["items"]:
+            it.pop("Uq", None)
+            it.pop("Bq", None)
         del src
         gc.collect()
-    print(f"decode {time.time() - t0:.1f}s")
+    print(f"leftover-on decode {time.time() - t0:.1f}s")
     stats: dict[str, dict] = {}
     for name, arr in acc.items():
-        ordered = sorted(arr)
-        stats[name] = {
-            "meanPsnr": round(float(sum(arr) / len(arr)), 3),
-            "minPsnr": round(float(ordered[0]), 3),
-            "medianPsnr": round(float(ordered[len(ordered) // 2]), 3),
-        }
-        print(f"  K′={name:4s}  mean {stats[name]['meanPsnr']:.2f}  min {stats[name]['minPsnr']:.2f}")
+        stats[name] = summarize(arr)
+        print(f"  K′={name:4s} leftover-on  mean {stats[name]['meanPsnr']:.2f}  min {stats[name]['minPsnr']:.2f}")
     v4s = json.loads((MEDIA / "v4" / "stats.json").read_text())
     stats["full"] = {
         "meanPsnr": float(v4s["meanPsnr"]),
         "minPsnr": float(v4s["minPsnr"]),
         "medianPsnr": float(v4s["medianPsnr"]),
     }
-    print(f"  K′=full  mean {stats['full']['meanPsnr']:.2f}  min {stats['full']['minPsnr']:.2f}  (frozen v4 reconstruct)")
+    print(
+        f"  K′=full leftover-on  mean {stats['full']['meanPsnr']:.2f}  "
+        f"min {stats['full']['minPsnr']:.2f}  (frozen v4 reconstruct)"
+    )
     t1 = time.time()
-    for name, _ in rungs:
-        dest = OUT / f"reconstruct-k{name}.mp4"
-        print(f"  ffmpeg {name} -> {dest.name}", flush=True)
-        ffmpeg_dir(dirs[name], dest)
+    for k in write_rungs:
+        dest = OUT / f"reconstruct-k{k}-left.mp4"
+        print(f"  ffmpeg k{k}-left -> {dest.name}", flush=True)
+        ffmpeg_dir(dirs[str(k)], dest)
+        shutil.rmtree(dirs[str(k)], ignore_errors=True)
     shutil.copy2(MEDIA / "v4" / "reconstruct.mp4", OUT / "reconstruct.mp4")
     shutil.copy2(OUT / "reconstruct.mp4", MEDIA / "reconstruct.mp4")
-    shutil.copy2(ORIGIN_V4, OUT / "origin.nar4")
-    print(f"ffmpeg {time.time() - t1:.1f}s")
+    shutil.copy2(OUT / "reconstruct.mp4", OUT / "reconstruct-k16-left.mp4")
+    if not (OUT / "origin.nar4").exists():
+        shutil.copy2(ORIGIN_V4, OUT / "origin.nar4")
+    print(f"ffmpeg leftover-on {time.time() - t1:.1f}s")
     return stats
 
 
@@ -312,25 +350,37 @@ def slim_stats(path: Path, attempt: str) -> dict | None:
     return out
 
 
-def write_lab(kstats: dict) -> None:
+def rung(stats: dict, k: str) -> dict:
+    s = stats[k]
+    return {"meanPsnr": float(s["meanPsnr"]), "minPsnr": float(s["minPsnr"])}
+
+
+def write_lab(k_off: dict, k_on: dict) -> None:
     data = json.loads((MEDIA / "analysis.json").read_text()) if (MEDIA / "analysis.json").exists() else json.loads(LAB_JSON.read_text())
     stats = data["stats"]
     if stats.get("attempt") == "v4" and "baselineV4" not in stats:
         stats["baselineV4"] = slim_stats(MEDIA / "v4" / "stats.json", "v4") or slim_stats(MEDIA / "stats-v4.json", "v4")
     stats["attempt"] = ATTEMPT
-    kprime = {k: {"meanPsnr": kstats[str(k)]["meanPsnr"], "minPsnr": kstats[str(k)]["minPsnr"]} for k in K_RUNGS}
-    kprime["full"] = {"meanPsnr": kstats["full"]["meanPsnr"], "minPsnr": kstats["full"]["minPsnr"]}
+    kprime = {str(k): rung(k_off, str(k)) for k in K_RUNGS}
+    kprime["full"] = rung(k_off, "16")
+    kleft = {str(k): rung(k_on, str(k)) for k in K_RUNGS}
+    kleft["full"] = rung(k_on, "full")
     stats["kPrime"] = kprime
-    stats["meanPsnr"] = kstats["full"]["meanPsnr"]
-    stats["minPsnr"] = kstats["full"]["minPsnr"]
-    stats["medianPsnr"] = kstats["full"]["medianPsnr"]
+    stats["kPrimeLeft"] = kleft
+    stats["meanPsnr"] = kleft["full"]["meanPsnr"]
+    stats["minPsnr"] = kleft["full"]["minPsnr"]
+    if "medianPsnr" in k_on["full"]:
+        stats["medianPsnr"] = k_on["full"]["medianPsnr"]
     stats["reconstructMp4Bytes"] = (MEDIA / "reconstruct.mp4").stat().st_size
     src = data.setdefault("source", {})
     src["reconstruct"] = "/media/reconstruct.mp4"
     src["reconstructV4"] = "/media/v4/reconstruct.mp4"
     src["reconstructV4r"] = "/media/v4r/reconstruct.mp4"
     src["reconstructKPrime"] = {str(k): f"/media/v4.1/reconstruct-k{k}.mp4" for k in K_RUNGS}
-    src["reconstructKPrime"]["full"] = "/media/v4.1/reconstruct.mp4"
+    src["reconstructKPrime"]["full"] = "/media/v4.1/reconstruct-k16.mp4"
+    src["reconstructKPrimeLeft"] = {str(k): f"/media/v4.1/reconstruct-k{k}-left.mp4" for k in K_RUNGS}
+    src["reconstructKPrimeLeft"]["16"] = "/media/v4.1/reconstruct.mp4"
+    src["reconstructKPrimeLeft"]["full"] = "/media/v4.1/reconstruct.mp4"
     data["attempt"] = ATTEMPT
     (MEDIA / "analysis.json").write_text(json.dumps(data))
     if LAB_JSON.parent.exists():
@@ -338,7 +388,7 @@ def write_lab(kstats: dict) -> None:
     (MEDIA / "stats-v4.1.json").write_text(json.dumps(stats, indent=2))
     (OUT / "stats.json").write_text(json.dumps(stats, indent=2))
     (OUT / "analysis.json").write_text(json.dumps(data))
-    print(json.dumps({"attempt": ATTEMPT, "kPrime": kprime, "origin": ORIGIN_V4.stat().st_size}, indent=2))
+    print(json.dumps({"attempt": ATTEMPT, "kPrime": kprime, "kPrimeLeft": kleft, "origin": ORIGIN_V4.stat().st_size}, indent=2))
 
 
 def main() -> None:
@@ -351,8 +401,9 @@ def main() -> None:
     self_test(model, files)
     if "--self-test" in sys.argv:
         return
-    kstats = bake(model, files)
-    write_lab(kstats)
+    k_off = load_off_stats()
+    k_on = bake_leftover_on(model, files)
+    write_lab(k_off, k_on)
     print("wrote", OUT)
 
 

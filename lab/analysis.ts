@@ -130,6 +130,7 @@ export type Analysis = {
     leftoverQ?: number;
     leftoverStride?: number;
     kPrime?: Record<string, { meanPsnr: number; minPsnr: number }>;
+    kPrimeLeft?: Record<string, { meanPsnr: number; minPsnr: number }>;
     kinds?: Record<string, number>;
     lambda?: number;
     skipMae?: number;
@@ -157,6 +158,7 @@ export type Analysis = {
     reconstructV2?: string;
     reconstructV3?: string;
     reconstructKPrime?: Record<string, string>;
+    reconstructKPrimeLeft?: Record<string, string>;
     scope: string;
     duration: number;
     startSec: number;
