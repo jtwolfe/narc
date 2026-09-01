@@ -20,8 +20,9 @@ This is research, not a product codec. Big Buck Bunny (Blender Foundation, [CC B
 | `attempt/v4.t3r` | Native 640, per-shot. Tile 2–64, cheap seams, JPEG-on-B, exclusive merge + residual trees. No UI. |
 | `attempt/v4.t4r` | 8×8 episode baseline, JPEG-B packing, translation warp, leftover JPEG ceiling. No UI. |
 | `attempt/v4` | **Product encode.** Native 640×360, 8×8 SVD, atlas JPEG-on-B, sparse leftover. Origin 15.23 MB, 33.95 dB. Lab default. |
+| `attempt/v4.1` | Selectable K′ decode of the v4 origin. Lab default. Same 15.23 MB. |
 
-Next work goes on a **new branch** off the attempt you want to beat. Do not rewrite v0, v1, v1.1, v1.2, v2, v3, or v4r media.
+Next work goes on a **new branch** off the attempt you want to beat. Do not rewrite v0, v1, v1.1, v1.2, v2, v3, v4r, or v4 media.
 
 - v0 notes: [`attempts/v0-global-translation.md`](attempts/v0-global-translation.md)
 - v1 notes: [`attempts/v1-block-mc.md`](attempts/v1-block-mc.md)
@@ -35,8 +36,9 @@ Next work goes on a **new branch** off the attempt you want to beat. Do not rewr
 - v4.t3r notes: [`attempts/v4.t3r.md`](attempts/v4.t3r.md)
 - v4.t4r notes: [`attempts/v4.t4r.md`](attempts/v4.t4r.md)
 - v4 notes: [`attempts/v4.md`](attempts/v4.md)
+- v4.1 notes: [`attempts/v4.1.md`](attempts/v4.1.md)
 
-v4 is the native encode the t-campaigns pointed at: 8×8 temporal SVD, one JPEG atlas of B per shot, leftover JPEG on the frames the SVD still misses. Mean 33.95 dB vs 640×360, origin 15.23 MB (2.14× the H.264 source). v4r stays on the 320×180 toggle as the frozen 16×16 baseline.
+v4.1 is the same origin as v4 with a live K′ peel at decode (μ → 16 → full). Mean 33.95 dB at full, 33.1 dB at K′=4, 20.9 dB at μ. Origin still 15.23 MB. v4 stays frozen. Blockiness tests come next on this branch.
 
 ## Layout
 
@@ -51,9 +53,11 @@ encoder/v4r/              frozen v4r encoder
 encoder/analyze-v4r.py    thin launcher for encoder/v4r
 encoder/v4/               v4 encoder (native 8×8 + atlas + leftover)
 encoder/analyze-v4.py     thin launcher for encoder/v4
+encoder/v4.1/             K′ bake from the v4 origin
+encoder/analyze-v4.1.py   thin launcher for encoder/v4.1
 media/                    that branch's reconstruct + analysis
 lab/                      Fluxfield UI snapshot
 attempts/                 per-attempt notes
 ```
 
-On `attempt/v4`, `media/stats-v4.json` holds the probe numbers. The live lab keeps v0 through v4r reconstructs so you can A/B without checking out a branch.
+On `attempt/v4.1`, `media/stats-v4.1.json` holds the peel numbers. The live lab keeps v0 through v4 reconstructs so you can A/B without checking out a branch.

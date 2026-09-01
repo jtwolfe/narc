@@ -141,12 +141,14 @@ export type Analysis = {
     baselineV12?: BaselineStats;
     baselineV2?: BaselineStats;
     baselineV3?: BaselineStats;
+    baselineV4?: BaselineStats;
     baselineV4r?: BaselineStats;
   };
   source: {
     clip: string;
     clipAnalysis?: string;
     reconstruct: string;
+    reconstructV4?: string;
     reconstructV4r?: string;
     reconstructV0?: string;
     reconstructV1?: string;
@@ -154,6 +156,7 @@ export type Analysis = {
     reconstructV12?: string;
     reconstructV2?: string;
     reconstructV3?: string;
+    reconstructKPrime?: Record<string, string>;
     scope: string;
     duration: number;
     startSec: number;

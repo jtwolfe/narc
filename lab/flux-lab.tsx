@@ -11,6 +11,20 @@ import type { Analysis, FrameKind, FrameRow, ShotRow } from "@/lib/analysis";
 import { frameAtTime } from "@/lib/analysis";
 import { cn, formatBytes, formatTime } from "@/lib/utils";
 
+type DecodeVer = "v41" | "v4" | "v4r" | "v3" | "v2" | "v12" | "v11" | "v1" | "v0";
+type KPrime = "0" | "1" | "2" | "4" | "8" | "16" | "full";
+
+const K_RUNGS: { id: KPrime; label: string }[] = [
+  { id: "0", label: "μ" },
+  { id: "1", label: "1" },
+  { id: "2", label: "2" },
+  { id: "4", label: "4" },
+  { id: "8", label: "8" },
+  { id: "16", label: "16" },
+  { id: "full", label: "full" },
+];
+const K_IDS = K_RUNGS.map((r) => r.id);
+
 const KIND_LABEL: Record<FrameKind, string> = {
   keyframe: "Keyframe",
   cut: "Cut",
@@ -49,9 +63,11 @@ export function FluxLab({ data }: { data: Analysis }) {
   const [playing, setPlaying] = useState(false);
   const [bitrate, setBitrate] = useState(1200);
   const [heat, setHeat] = useState(false);
-  const [decode, setDecode] = useState<"v4" | "v4r" | "v3" | "v2" | "v12" | "v11" | "v1" | "v0">("v4");
+  const [decode, setDecode] = useState<DecodeVer>("v41");
+  const [kPrime, setKPrime] = useState<KPrime>("full");
   const [srcRaster, setSrcRaster] = useState<"full" | "analysis">("full");
   const swappingSrc = useRef(false);
+  const swappingRec = useRef(false);
   const tRef = useRef(t);
   tRef.current = t;
   const playingRef = useRef(playing);
@@ -72,6 +88,12 @@ export function FluxLab({ data }: { data: Analysis }) {
       recRef.current.currentTime = v;
     }
   }, [duration]);
+
+  const stepKPrime = useCallback((dir: 1 | -1) => {
+    const i = K_IDS.indexOf(kPrime);
+    const next = K_IDS[(i + dir + K_IDS.length) % K_IDS.length];
+    if (next) setKPrime(next);
+  }, [kPrime]);
 
   const toggle = useCallback(() => {
     const a = srcRef.current;
@@ -101,11 +123,16 @@ export function FluxLab({ data }: { data: Analysis }) {
       } else if (e.code === "ArrowLeft") {
         e.preventDefault();
         sync(tRef.current - 1 / stats.fps);
+      } else if (e.key === "[" || e.key === "]") {
+        if (decode === "v41") {
+          e.preventDefault();
+          stepKPrime(e.key === "]" ? 1 : -1);
+        }
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [toggle, sync, stats.fps]);
+  }, [toggle, sync, stats.fps, decode, stepKPrime]);
 
   const nextKey = () => {
     const nxt = frames.find((f) => f.key && f.t > t + 0.05);
@@ -139,6 +166,22 @@ export function FluxLab({ data }: { data: Analysis }) {
     return () => v.removeEventListener("loadeddata", restore);
   }, [srcRaster]);
 
+  useEffect(() => {
+    const v = recRef.current;
+    if (!v) return;
+    const hold = tRef.current;
+    swappingRec.current = true;
+    const restore = () => {
+      if (Math.abs(v.currentTime - hold) > 0.04) v.currentTime = hold;
+      if (playingRef.current) void v.play();
+      else v.pause();
+      swappingRec.current = false;
+    };
+    v.addEventListener("loadeddata", restore, { once: true });
+    if (v.readyState >= 2) restore();
+    return () => v.removeEventListener("loadeddata", restore);
+  }, [kPrime, decode]);
+
   const srcClip =
     srcRaster === "analysis"
       ? (source.clipAnalysis ?? "/media/source-320.mp4")
@@ -149,11 +192,12 @@ export function FluxLab({ data }: { data: Analysis }) {
       : "POSIX original · 640×360 · click for 320×180";
 
   const deliveryBytes = Math.round((bitrate * 1000 * duration) / 8);
-  const heatBase = decode === "v4" ? "/media/v4/heatmaps" : "/media/heatmaps";
+  const heatBase = decode === "v41" || decode === "v4" ? "/media/v4/heatmaps" : "/media/heatmaps";
   const heatSrc =
     frame.key || frame.cut || frame.residual > 10
       ? `${heatBase}/${String(frame.i).padStart(4, "0")}.jpg`
       : null;
+  const kClips = source.reconstructKPrime;
   const recSrc =
     decode === "v0"
       ? (source.reconstructV0 ?? "/media/v0/reconstruct.mp4")
@@ -169,11 +213,16 @@ export function FluxLab({ data }: { data: Analysis }) {
                 ? (source.reconstructV3 ?? "/media/v3/reconstruct.mp4")
                 : decode === "v4r"
                   ? (source.reconstructV4r ?? "/media/v4r/reconstruct.mp4")
-                  : source.reconstruct;
+                  : decode === "v4"
+                    ? (source.reconstructV4 ?? "/media/v4/reconstruct.mp4")
+                    : kPrime !== "full" && kClips?.[kPrime]
+                      ? kClips[kPrime]
+                      : (kClips?.full ?? source.reconstruct);
   const baseline = stats.baseline;
   const baselineV1 = stats.baselineV1;
   const baselineV11 = stats.baselineV11;
-  const isV4 = (stats.attempt ?? "") === "v4";
+  const isV41 = (stats.attempt ?? "") === "v4.1";
+  const isV4 = isV41 || (stats.attempt ?? "") === "v4";
   const isV4r = (stats.attempt ?? "").includes("v4r");
   const isV3 = (stats.attempt ?? "").includes("v3");
   const baselineV4r = stats.baselineV4r;
@@ -213,7 +262,11 @@ export function FluxLab({ data }: { data: Analysis }) {
                 ? "Model decode · v3"
                 : decode === "v4r"
                   ? "Model decode · v4r"
-                  : "Model decode · v4";
+                  : decode === "v4"
+                    ? "Model decode · v4"
+                    : kPrime === "full"
+                      ? "Model decode · v4.1"
+                      : `Model decode · v4.1 · K′=${kPrime === "0" ? "μ" : kPrime}`;
   const decodeSub =
     decode === "v0"
       ? "Global translation · 10 fps"
@@ -229,7 +282,22 @@ export function FluxLab({ data }: { data: Analysis }) {
                 ? "CU tree + bitstream · 24 fps"
                 : decode === "v4r"
                   ? "16×16 temporal SVD · 320×180"
-                  : "8×8 SVD · atlas B · leftover · 640×360";
+                  : decode === "v4"
+                    ? "8×8 SVD · atlas B · leftover · 640×360"
+                    : kPrime === "full"
+                      ? "full rank + leftover · 640×360"
+                      : kPrime === "0"
+                        ? "shot-mean JPEG only · leftover off"
+                        : `rank-${kPrime} peel · leftover off`;
+  const liveKp = decode === "v41" ? kPrime : "full";
+  const livePsnr =
+    liveKp === "full"
+      ? stats.meanPsnr
+      : stats.kPrime?.[liveKp]?.meanPsnr;
+  const liveMin =
+    liveKp === "full"
+      ? stats.minPsnr
+      : stats.kPrime?.[liveKp]?.minPsnr;
 
   const strip = useMemo(() => {
     const out: number[] = [];
@@ -251,10 +319,10 @@ export function FluxLab({ data }: { data: Analysis }) {
             </h1>
             <p className="mt-2 max-w-xl text-sm text-pretty text-fg-muted">
               {source.title} · {source.window}. Attempt{" "}
-              <span className="text-fg">{stats.attempt ?? "v4"}</span>
-              : 8×8 temporal SVD at native 640×360, one JPEG atlas of the
-              spatial bases per shot, leftover JPEG where the SVD misses.
-              K′ peels rank at decode. Toggle back through v4r, v3, v2, v1.2, v1.1, broken v1, and v0.
+              <span className="text-fg">{stats.attempt ?? "v4.1"}</span>
+              : same 8×8 origin as v4. K′ peels stored rank at decode — μ is
+              the shot-mean JPEG, full adds leftover. Origin bytes do not
+              change. Toggle back through frozen v4, v4r, v3, v2, v1.2, v1.1, broken v1, and v0.
             </p>
           </div>
           <p className="font-mono text-xs leading-relaxed text-fg-subtle sm:text-right">
@@ -294,14 +362,15 @@ export function FluxLab({ data }: { data: Analysis }) {
             }}
           />
           <Viewer
-            key={decode}
+            key={`${decode}-${kPrime}`}
             label={decodeLabel}
             sub={decodeSub}
             videoRef={recRef}
             src={recSrc}
             muted
-            overlay={heat && (decode === "v4" || decode === "v4r" || decode === "v3") && heatSrc ? heatSrc : null}
+            overlay={heat && (decode === "v41" || decode === "v4" || decode === "v4r" || decode === "v3") && heatSrc ? heatSrc : null}
             onTime={(v) => {
+              if (swappingRec.current) return;
               setT(v);
               if (srcRef.current && Math.abs(srcRef.current.currentTime - v) > 0.12) {
                 srcRef.current.currentTime = v;
@@ -340,6 +409,7 @@ export function FluxLab({ data }: { data: Analysis }) {
             <div className="flex min-h-11 flex-wrap rounded-md bg-bg-subtle p-0.5" role="group" aria-label="Decoder version">
               {(
                 [
+                  ["v41", "v4.1"],
                   ["v4", "v4"],
                   ["v4r", "v4r"],
                   ["v3", "v3"],
@@ -357,13 +427,42 @@ export function FluxLab({ data }: { data: Analysis }) {
                     "min-h-10 rounded-sm px-3 font-mono text-xs",
                     decode === id ? "bg-bg-elevated text-fg" : "text-fg-muted",
                   )}
-                  onClick={() => setDecode(id)}
+                  onClick={() => {
+                    setDecode(id);
+                    if (id !== "v41") setKPrime("full");
+                  }}
                 >
                   {label}
                 </button>
               ))}
             </div>
           </div>
+          {decode === "v41" ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="font-mono text-xs text-fg-subtle">K′</span>
+              <div className="flex min-h-11 flex-wrap rounded-md bg-bg-subtle p-0.5" role="group" aria-label="K prime peel">
+                {K_RUNGS.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className={cn(
+                      "min-h-10 rounded-sm px-3 font-mono text-xs",
+                      kPrime === id ? "bg-bg-elevated text-fg" : "text-fg-muted",
+                    )}
+                    onClick={() => setKPrime(id)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <span className="font-mono text-xs text-fg-muted">
+                {livePsnr != null ? `${livePsnr.toFixed(1)} dB` : ""}
+                {liveMin != null ? ` · min ${liveMin.toFixed(1)}` : ""}
+                {kPrime === "full" ? " · leftover on" : " · leftover off"}
+                <span className="ml-2 text-fg-subtle">[ ] to peel</span>
+              </span>
+            </div>
+          ) : null}
           <div className="mt-3">
             <Slider
               min={0}
@@ -384,9 +483,9 @@ export function FluxLab({ data }: { data: Analysis }) {
 
         <div className="mt-6 grid gap-3 md:grid-cols-4">
           <StatCard
-            label="v4 origin"
+            label="v4.1 origin"
             value={isV4 ? formatBytes(stats.bitstreamBytes ?? stats.modelBytes) : "encoding…"}
-            hint="zlib(8×8 U + atlas B + leftover + JPEG μ)"
+            hint="same NAR4 as v4 · K′ is decode-only"
           />
           <StatCard
             label="v4r origin (frozen)"
@@ -394,9 +493,13 @@ export function FluxLab({ data }: { data: Analysis }) {
             hint="16×16 int8 SVD · 320×180 · 34.7 dB"
           />
           <StatCard
-            label="Mean reconstruct PSNR"
-            value={isV4 && stats.meanPsnr ? `${stats.meanPsnr.toFixed(1)} dB` : "—"}
-            hint={isV4 && stats.minPsnr != null ? `min ${stats.minPsnr.toFixed(1)} · median ${stats.medianPsnr?.toFixed(1)}` : "v4 vs native 640×360"}
+            label={liveKp === "full" ? "Mean reconstruct PSNR" : `K′=${liveKp === "0" ? "μ" : liveKp} PSNR`}
+            value={isV4 && livePsnr != null ? `${livePsnr.toFixed(1)} dB` : "—"}
+            hint={
+              isV4 && liveMin != null
+                ? `min ${liveMin.toFixed(1)}${liveKp === "full" ? " · leftover on" : " · peel, leftover off"}`
+                : "v4.1 vs native 640×360"
+            }
           />
           <StatCard
             label="H.264 source clip"
@@ -436,12 +539,12 @@ export function FluxLab({ data }: { data: Analysis }) {
 
         {(baseline || baselineV1 || baselineV11 || baselineV12 || baselineV2 || stats.bitstreamBytes != null) ? (
           <section className="mt-3 overflow-x-auto rounded-xl bg-bg-elevated p-4 shadow-border">
-            <h2 className="font-display text-lg font-medium">v4 · v4r · v3 · v2 · v1.2 · v1.1 · v1 · v0</h2>
+            <h2 className="font-display text-lg font-medium">v4.1 · v4 · v4r · v3 · v2 · v1.2 · v1.1 · v1 · v0</h2>
             <table className="mt-3 w-full text-left font-mono text-sm">
               <thead className="text-xs text-fg-subtle">
                 <tr>
                   <th className="sticky left-0 bg-bg-elevated py-2 pr-2 font-medium"> </th>
-                  <th className="py-2 pr-2 font-medium">v4 native</th>
+                  <th className="py-2 pr-2 font-medium">v4.1 native</th>
                   <th className="py-2 pr-2 font-medium">v4r 320</th>
                   <th className="py-2 pr-2 font-medium">v3 tree</th>
                   <th className="py-2 pr-2 font-medium">v2 nets</th>
@@ -533,14 +636,10 @@ export function FluxLab({ data }: { data: Analysis }) {
             </table>
             {isV4 && stats.kPrime ? (
               <p className="mt-3 font-mono text-xs text-fg-subtle">
-                K′ peel (SVD only, leftover not applied
-                {stats.kPrime["8"] && stats.kPrime["16"] && stats.kPrime["8"].meanPsnr > stats.kPrime["16"].meanPsnr
-                  ? "; K′=8 skips S07+S14 so it is not episode-wide"
-                  : ""}
-                ):{" "}
-                {(["0", "1", "2", "4", "8", "16"] as const).map((k) => (
+                K′ peel, episode-wide (leftover only on full):{" "}
+                {(["0", "1", "2", "4", "8", "16", "full"] as const).map((k) => (
                   <span key={k} className="mr-3">
-                    {k}={stats.kPrime?.[k]?.meanPsnr.toFixed(1)} dB
+                    {k === "0" ? "μ" : k}={stats.kPrime?.[k]?.meanPsnr.toFixed(1)} dB
                   </span>
                 ))}
               </p>
@@ -564,7 +663,7 @@ export function FluxLab({ data }: { data: Analysis }) {
                     : "—"
                 }
               />
-              <Row k="PSNR" v={frame.psnr != null ? `${frame.psnr.toFixed(1)} dB` : "—"} />
+              <Row k={liveKp === "full" ? "PSNR" : "Full-rung PSNR"} v={frame.psnr != null ? `${frame.psnr.toFixed(1)} dB` : "—"} />
             </dl>
             {frame.skipBlocks != null ? (
               <>
@@ -636,7 +735,7 @@ export function FluxLab({ data }: { data: Analysis }) {
               <span className="block font-medium text-fg">1. Shot mean + 8×8 SVD</span>
               A histogram cut starts a new shot. Inside it, every 8×8 is a
               temporal model: JPEG of the shot mean, then rank-K SVD until
-              32.5 dB. No warp. K′ drops rank at decode.
+              32.5 dB. No warp.
             </li>
             <li>
               <span className="block font-medium text-fg">2. Atlas of B</span>
@@ -645,10 +744,10 @@ export function FluxLab({ data }: { data: Analysis }) {
               probes found and the 8×8 per-tile JPEGs lost.
             </li>
             <li>
-              <span className="block font-medium text-fg">3. Sparse leftover</span>
-              Where the SVD still misses (busy tiles, every 8th frame above
-              3.5 MAE), a leftover JPEG lands in the origin. Reconstruct is
-              native 640×360 24 fps. Bytes are a meter; PSNR is the knife.
+              <span className="block font-medium text-fg">3. K′ at decode</span>
+              The origin does not change. K′ keeps the first N temporal
+              modes and drops the rest. μ is the shot-mean JPEG. Full is
+              stored rank plus leftover JPEGs. Use the K′ strip, or [ ].
             </li>
           </ol>
         </section>
