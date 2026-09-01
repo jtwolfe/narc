@@ -20,7 +20,7 @@ This is research, not a product codec. Big Buck Bunny (Blender Foundation, [CC B
 | `attempt/v4.t3r` | Native 640, per-shot. Tile 2–64, cheap seams, JPEG-on-B, exclusive merge + residual trees. No UI. |
 | `attempt/v4.t4r` | 8×8 episode baseline, JPEG-B packing, translation warp, leftover JPEG ceiling. No UI. |
 | `attempt/v4` | **Product encode.** Native 640×360, 8×8 SVD, atlas JPEG-on-B, sparse leftover. Origin 15.23 MB, 33.95 dB. Lab default. |
-| `attempt/v4.1` | Selectable K′ decode of the v4 origin. Lab default. Same 15.23 MB. |
+| `attempt/v4.1` | Selectable K′ decode of the v4 origin. Lab default. Same 15.23 MB. Blockiness: leftover s1 wins; not shipped yet. |
 
 Next work goes on a **new branch** off the attempt you want to beat. Do not rewrite v0, v1, v1.1, v1.2, v2, v3, v4r, or v4 media.
 
@@ -38,7 +38,7 @@ Next work goes on a **new branch** off the attempt you want to beat. Do not rewr
 - v4 notes: [`attempts/v4.md`](attempts/v4.md)
 - v4.1 notes: [`attempts/v4.1.md`](attempts/v4.1.md)
 
-v4.1 is the same origin as v4 with a live K′ peel at decode (μ → 16 → full). Mean 33.95 dB at full, 33.1 dB at K′=4, 20.9 dB at μ. Origin still 15.23 MB. v4 stays frozen. Blockiness tests come next on this branch.
+v4.1 is the same origin as v4 with a live K′ peel at decode (μ → 16 → full). Mean 33.95 dB at full, 33.1 dB at K′=4, 20.9 dB at μ. Origin still 15.23 MB. v4 stays frozen. Blockiness campaign on this branch: **dense leftover stride 1** is the moving-element fix (S06 +2.33 dB / min 33.23, episode +6.45 MB); hop-4 overlap kills the 8×8 lattice at ~4× tiles; deblock and affine are dead. Lab not rewritten until that leftover is packed.
 
 ## Layout
 
