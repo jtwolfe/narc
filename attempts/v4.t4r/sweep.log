@@ -1,0 +1,87 @@
+=== v4.t4r start ===
+2160 frames 640×360 from /tmp/bbb/frames-640
+15 shots
+  S00 [   0, 146) T=146 flux=2.39 locked
+  S01 [ 146, 256) T=110 flux=1.60 locked
+  S02 [ 256, 331) T= 75 flux=2.43 locked
+  S03 [ 331, 466) T=135 flux=5.40 tracking
+  S04 [ 466, 511) T= 45 flux=1.73 locked
+  S05 [ 511, 563) T= 52 flux=1.99 locked
+  S06 [ 563, 719) T=156 flux=6.15 tracking
+  S07 [ 719, 954) T=235 flux=1.71 locked
+  S08 [ 954, 994) T= 40 flux=2.39 locked
+  S09 [ 994,1194) T=200 flux=1.26 locked
+  S10 [1194,1294) T=100 flux=1.98 locked
+  S11 [1294,1504) T=210 flux=4.14 tracking
+  S12 [1504,1631) T=127 flux=2.98 locked
+  S13 [1631,1701) T= 70 flux=6.04 tracking
+  S14 [1701,2160) T=459 flux=1.98 locked
+reps L=S09 T=S03 B=S06
+RSS smoke 8×8 on S08 T=40 rss0=33MB
+RSS smoke peak 108MB recon (40, 384, 640, 3) psnr0=36.80
+Phase A
+  15 configs
+A-S00-disjoint-p8-s2                       locked    PSNR  34.42/27.52  K=3.13 sat=   0  orig=3.514MB  seamR=1.12  42.7s  rss=324MB
+A-S01-disjoint-p8-s2                       locked    PSNR  38.91/34.76  K=0.81 sat=   0  orig=0.755MB  seamR=1.14  24.2s  rss=251MB
+A-S02-disjoint-p8-s2                       locked    PSNR  37.33/34.03  K=0.92 sat=   0  orig=0.911MB  seamR=1.16  17.2s  rss=218MB
+A-S03-disjoint-p8-s2                       tracking  PSNR  35.03/29.00  K=2.63 sat=   0  orig=2.790MB  seamR=1.21  37.7s  rss=302MB
+A-S04-disjoint-p8-s2                       locked    PSNR  39.44/38.65  K=0.06 sat=   0  orig=0.086MB  seamR=1.05  8.9s  rss=148MB
+A-S05-disjoint-p8-s2                       locked    PSNR  37.22/36.55  K=0.21 sat=   0  orig=0.229MB  seamR=1.02  11.2s  rss=159MB
+A-S06-disjoint-p8-s2                       tracking  PSNR  33.80/31.48  K=4.80 sat=   0  orig=5.924MB  seamR=1.20  47.2s  rss=354MB
+A-S07-disjoint-p8-s2                       locked    PSNR  36.79/28.14  K=2.03 sat=   0  orig=2.437MB  seamR=1.11  59.9s  rss=441MB
+A-S08-disjoint-p8-s2                       locked    PSNR  37.64/36.40  K=0.42 sat=   0  orig=0.409MB  seamR=1.08  8.7s  rss=156MB
+A-S09-disjoint-p8-s2                       locked    PSNR  37.31/32.93  K=0.93 sat=   0  orig=1.003MB  seamR=1.12  61.0s  rss=572MB
+A-S10-disjoint-p8-s2                       locked    PSNR  35.85/30.78  K=1.04 sat=   0  orig=1.014MB  seamR=1.04  25.4s  rss=290MB
+A-S11-disjoint-p8-s2                       tracking  PSNR  35.59/29.89  K=2.15 sat=   0  orig=2.425MB  seamR=1.20  55.7s  rss=400MB
+A-S12-disjoint-p8-s2                       locked    PSNR  34.94/32.58  K=1.75 sat=   0  orig=1.762MB  seamR=1.12  32.2s  rss=286MB
+A-S13-disjoint-p8-s2                       tracking  PSNR  34.59/31.96  K=4.42 sat=   2  orig=4.245MB  seamR=1.19  19.1s  rss=220MB
+A-S14-disjoint-p8-s2                       locked    PSNR  34.60/29.21  K=3.20 sat=   0  orig=4.981MB  seamR=1.15  117.6s  rss=765MB
+Phase J
+  19 configs
+J-S00-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  33.09/27.25  K=3.13 sat=   0  orig=1.793MB  seamR=1.16  45.3s  rss=328MB
+J-S01-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  38.10/34.32  K=0.81 sat=   0  orig=0.352MB  seamR=1.16  25.9s  rss=312MB
+J-S02-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  36.81/33.65  K=0.92 sat=   0  orig=0.412MB  seamR=1.19  18.8s  rss=214MB
+J-S03-disjoint-p8-jq70-Bjpeg-s2            tracking  PSNR  33.40/28.47  K=2.63 sat=   0  orig=1.328MB  seamR=1.29  41.4s  rss=308MB
+J-S04-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  38.97/38.27  K=0.06 sat=   0  orig=0.060MB  seamR=1.04  9.1s  rss=174MB
+J-S05-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  36.48/35.91  K=0.21 sat=   0  orig=0.122MB  seamR=1.01  11.3s  rss=189MB
+J-S06-disjoint-p8-jq70-Bjpeg-s2            tracking  PSNR  32.12/30.65  K=4.80 sat=   0  orig=3.124MB  seamR=1.41  49.9s  rss=353MB
+J-S07-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  35.24/27.71  K=2.03 sat=   0  orig=1.303MB  seamR=1.14  61.4s  rss=452MB
+J-S08-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  35.90/35.01  K=0.42 sat=   0  orig=0.191MB  seamR=1.05  9.5s  rss=165MB
+J-S09-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  35.84/32.35  K=0.93 sat=   0  orig=0.467MB  seamR=1.18  55.0s  rss=581MB
+J-S10-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  34.47/30.38  K=1.04 sat=   0  orig=0.465MB  seamR=1.05  26.4s  rss=300MB
+J-S11-disjoint-p8-jq70-Bjpeg-s2            tracking  PSNR  34.83/29.21  K=2.15 sat=   0  orig=1.228MB  seamR=1.28  57.6s  rss=403MB
+J-S12-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  33.41/31.69  K=1.75 sat=   0  orig=0.764MB  seamR=1.20  33.5s  rss=296MB
+J-S13-disjoint-p8-jq70-Bjpeg-s2            tracking  PSNR  32.45/30.56  K=4.42 sat=   2  orig=1.807MB  seamR=1.35  21.6s  rss=228MB
+J-S14-disjoint-p8-jq70-Bjpeg-s2            locked    PSNR  32.93/28.58  K=3.20 sat=   0  orig=3.172MB  seamR=1.24  120.8s  rss=760MB
+Jq-S09-disjoint-p8-jq50-Bjpeg-s2           locked    PSNR  35.25/32.05  K=0.93 sat=   0  orig=0.444MB  seamR=1.18  47.8s  rss=390MB
+Jq-S09-disjoint-p8-jq90-Bjpeg-s2           locked    PSNR  36.29/32.55  K=0.93 sat=   0  orig=0.531MB  seamR=1.19  47.1s  rss=389MB
+Jq-S06-disjoint-p8-jq50-Bjpeg-s2           tracking  PSNR  31.58/30.28  K=4.80 sat=   0  orig=3.026MB  seamR=1.41  49.2s  rss=353MB
+Jq-S06-disjoint-p8-jq90-Bjpeg-s2           tracking  PSNR  32.47/30.85  K=4.80 sat=   0  orig=3.375MB  seamR=1.44  49.4s  rss=354MB
+Phase Q
+  4 configs
+Q-S09-disjoint-p8-t40.0-s2                 locked    PSNR  43.52/39.67  K=2.37 sat=  36  orig=2.401MB  seamR=1.14  58.1s  rss=530MB
+Q-S09-disjoint-p8-jq70-Bjpeg-t40.0-s2      locked    PSNR  38.28/36.34  K=2.37 sat=  36  orig=1.061MB  seamR=1.23  52.8s  rss=388MB
+Q-S06-disjoint-p8-t40.0-s2                 tracking  PSNR  40.29/37.45  K=11.84 sat=1045  orig=14.737MB  seamR=1.17  53.5s  rss=353MB
+Q-S06-disjoint-p8-jq70-Bjpeg-t40.0-s2      tracking  PSNR  35.09/34.31  K=11.84 sat=1045  orig=7.766MB  seamR=1.69  57.5s  rss=415MB
+Phase W
+  6 configs
+    warp tiles 2000/3840 rss=612MB
+W-S09-wshot-p8-s2                          locked    PSNR  37.31/32.93  K=0.93 sat=   0  orig=1.006MB  seamR=1.12  47.9s  rss=452MB
+    warp tiles 2000/3840 rss=596MB
+W-S09-wtile-p8-s2                          locked    PSNR  28.41/25.33  K=0.86 sat=   0  orig=1.026MB  seamR=1.07  215.1s  rss=451MB
+    warp tiles 2000/3840 rss=485MB
+W-S03-wshot-p8-s2                          tracking  PSNR  35.01/26.63  K=2.67 sat=   0  orig=2.850MB  seamR=1.19  38.6s  rss=377MB
+    warp tiles 2000/3840 rss=475MB
+W-S03-wtile-p8-s2                          tracking  PSNR  21.44/15.11  K=2.79 sat=   0  orig=3.173MB  seamR=1.07  180.3s  rss=377MB
+    warp tiles 2000/3840 rss=481MB
+W-S06-wshot-p8-s2                          tracking  PSNR  28.05/22.81  K=5.09 sat=   2  orig=6.412MB  seamR=1.02  48.1s  rss=379MB
+    warp tiles 2000/3840 rss=470MB
+W-S06-wtile-p8-s2                          tracking  PSNR  19.84/15.77  K=4.58 sat=   0  orig=6.021MB  seamR=1.05  213.7s  rss=379MB
+W-jpeg skip: wtile 19.84 vs A 33.80 (<0.3 dB)
+Phase Wj
+  0 configs
+Phase L
+  1 configs
+L-S06-disjoint-p8-Lq40-s2                  tracking  PSNR  36.97/35.38  K=4.80 sat=   0  orig=7.224MB  seamR=1.18  46.9s  rss=379MB
+wrote /workspace/attempts/v4.t4r/README.md and attempts/v4.t4r.md
+=== done 45 rows ===
